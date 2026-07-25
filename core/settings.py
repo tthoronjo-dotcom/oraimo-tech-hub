@@ -7,7 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ===== SECURITY =====
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+
+# ===== ALLOWED HOSTS - Vercel Compatible =====
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.vercel.app,.ngrok-free.dev').split(',')
 
 # ===== APPLICATION =====
 INSTALLED_APPS = [
@@ -72,21 +74,30 @@ TEMPLATES = [
     },
 ]
 
-# ===== DATABASE (PostgreSQL) =====
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='oraimo_db'),
-        'USER': config('DB_USER', default='oraimo_user'),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
-        'CONN_MAX_AGE': 60,
-        'OPTIONS': {
-            'connect_timeout': 10,
+# ===== DATABASE - Flexible for Vercel =====
+# Use PostgreSQL if available, otherwise SQLite
+try:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='oraimo_db'),
+            'USER': config('DB_USER', default='oraimo_user'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+            'CONN_MAX_AGE': 60,
+            'OPTIONS': {
+                'connect_timeout': 10,
+            }
         }
     }
-}
+except:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ===== AUTHENTICATION =====
 AUTH_PASSWORD_VALIDATORS = [
@@ -116,11 +127,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 CORS_ALLOWED_ORIGINS = [
     "https://oraimotechhub.co.ke",
     "https://www.oraimotechhub.co.ke",
+    "https://oraimo-tech-hub.vercel.app",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-    "http://localhost:8080",
-    "http://127.0.0.1:8080",
-    "http://192.168.0.102:8080",
 ]
 
 # ===== INTERNATIONALIZATION =====
@@ -130,7 +139,7 @@ USE_I18N = True
 USE_TZ = True
 
 # ===== STATIC & MEDIA =====
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -141,10 +150,10 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ===== FILE UPLOAD SECURITY =====
-DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
-FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
-# ===== SECURITY HEADERS (Development) =====
+# ===== SECURITY HEADERS =====
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = False
@@ -175,7 +184,7 @@ DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'backups'}
 DBBACKUP_CLEANUP_KEEP = 7
 
-# ===== CACHE (File-based - Development) =====
+# ===== CACHE (File-based) =====
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
@@ -193,15 +202,16 @@ IMAGEKIT_USE_MEMCACHED_SAFE_CACHE_KEY = False
 IMAGEKIT_CACHE_TIMEOUT = 300
 IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = 'imagekit.cachefiles.backends.Simple'
 
-# ===== CELERY (Background Tasks) =====
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Africa/Nairobi'
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 30 * 60
+# ===== CELERY (Disabled for Vercel) =====
+# Celery is disabled for Vercel deployment
+# CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+# CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'Africa/Nairobi'
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # ===== DELIVERY CONFIGURATION =====
 DELIVERY_FEES = {
@@ -219,8 +229,8 @@ FREE_OVER_THRESHOLD_LOCATIONS = [
     'Along Waiyaki Way',
     'Nairobi Outskirts',
 ]
+
 # ===== EMAIL CONFIGURATION =====
-# Use SMTP backend for actual email sending
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -231,17 +241,11 @@ DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='techbyoraimo@gmail.co
 ADMIN_EMAIL = config('ADMIN_EMAIL', default='techbyoraimo@gmail.com')
 
 # Site URL for emails
-SITE_URL = config('SITE_URL', default='https://oraimotechhub.co.ke')
+SITE_URL = config('SITE_URL', default='https://oraimo-tech-hub.vercel.app')
+
 # ===== PESAPAL CONFIGURATION (DISABLED FOR COD) =====
-# Pesapal is disabled for Payment on Delivery (COD) mode
-# To re-enable Pesapal, uncomment the lines below
-# PESAPAL_CONSUMER_KEY = config('PESAPAL_CONSUMER_KEY', default='')
-# PESAPAL_CONSUMER_SECRET = config('PESAPAL_CONSUMER_SECRET', default='')
-# PESAPAL_ENVIRONMENT = config('PESAPAL_ENVIRONMENT', default='sandbox')
-# PESAPAL_CALLBACK_URL = config('PESAPAL_CALLBACK_URL', default='')
-# PESAPAL_IPN_URL = config('PESAPAL_IPN_URL', default='')
 PESAPAL_TIMEOUT = 30
-PESAPAL_ENABLED = False  # Flag to check if Pesapal is enabled
+PESAPAL_ENABLED = False
 
 # ===== REST FRAMEWORK =====
 REST_FRAMEWORK = {
@@ -320,10 +324,6 @@ LOGGING = {
             'handlers': ['file', 'console', 'mail_admins'],
             'level': 'INFO',
         },
-        'celery': {
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-        },
     },
 }
 
@@ -335,17 +335,12 @@ handler500 = 'core.views.custom_500'
 # ===== SESSION =====
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-# ===== NGROK SUPPORT =====
-# Allow ngrok subdomains for public tunneling
-# Add '.ngrok-free.dev' to allow ANY ngrok subdomain
-ALLOWED_HOSTS += ['.ngrok-free.dev']
-
-# CSRF trusted origins for ngrok HTTPS
+# ===== CSRF TRUSTED ORIGINS =====
 CSRF_TRUSTED_ORIGINS = [
     'https://*.ngrok-free.dev',
+    'https://*.vercel.app',
 ]
 
 # ===== SECURE PROXY SETTINGS =====
-# Since ngrok terminates HTTPS, we need to tell Django to trust the forwarded protocol
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
