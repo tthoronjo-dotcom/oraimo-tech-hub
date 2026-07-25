@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django_filters',
     
     'ckeditor',
-    'import_export',
+    
     
     # Local apps
     'shop',
