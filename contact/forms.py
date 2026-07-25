@@ -1,5 +1,5 @@
 from django import forms
-from django_simple_captcha.fields import CaptchaField
+
 
 class ContactForm(forms.Form):
     name = forms.CharField(
@@ -33,4 +33,4 @@ class ContactForm(forms.Form):
             'style': 'background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 10px; padding: 10px 15px;'
         })
     )
-    captcha = CaptchaField()
+

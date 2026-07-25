@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_filters',
-    'django_simple_captcha',
+    
     'ckeditor',
     'import_export',
     
