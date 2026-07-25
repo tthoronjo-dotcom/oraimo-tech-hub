@@ -260,20 +260,13 @@ REST_FRAMEWORK = {
 }
 
 # ===== LOGGING =====
+# ===== LOGGING =====
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
-        },
         'simple': {
             'format': '{levelname} {asctime} {message}',
-            'style': '{',
-        },
-        'payment': {
-            'format': '[PAYMENT] {asctime} {levelname} - {message}',
             'style': '{',
         },
     },
@@ -282,51 +275,31 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
         },
-        'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/oraimo.log',
-            'maxBytes': 10485760,
-            'backupCount': 5,
-            'formatter': 'verbose',
-        },
-        'payment_file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/payments.log',
-            'maxBytes': 10485760,
-            'backupCount': 10,
-            'formatter': 'payment',
-        },
-        'mail_admins': {
-            'level': 'ERROR',
-            'class': 'django.utils.log.AdminEmailHandler',
-            'formatter': 'verbose',
-        },
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['file', 'mail_admins'],
+            'handlers': ['console'],
             'level': 'ERROR',
         },
         'payment': {
-            'handlers': ['payment_file', 'console'],
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'checkout': {
-            'handlers': ['file', 'console'],
+            'handlers': ['console'],
             'level': 'INFO',
         },
         'oraimo': {
-            'handlers': ['file', 'console', 'mail_admins'],
+            'handlers': ['console'],
             'level': 'INFO',
         },
     },
 }
-
 # ===== CUSTOM ERROR HANDLERS =====
 handler404 = 'core.views.custom_404'
 handler403 = 'core.views.custom_403'
