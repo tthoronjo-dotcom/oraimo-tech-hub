@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+
+{% block title %}Analytics Dashboard - Oraimo Tech Hub{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📊 Analytics Dashboard</h1>
+        <select id="dateRange" class="form-select w-auto">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+        </select>
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5>Total Revenue</h5>
+                    <h2 id="totalRevenue">KES 0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5>Total Orders</h5>
+                    <h2 id="totalOrders">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5>Avg Order Value</h5>
+                    <h2 id="avgOrderValue">KES 0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5>Success Rate</h5>
+                    <h2 id="successRate">0%</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header"><h5>Daily Sales (KES)</h5></div>
+                <div class="card-body">
+                    <canvas id="salesChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header"><h5>Sales by Category</h5></div>
+                <div class="card-body">
+                    <canvas id="categoryChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Top Products & Recent Orders -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"><h5>Top Selling Products</h5></div>
+                <div class="card-body">
+                    <table class="table table-sm" id="topProductsTable">
+                        <thead><tr><th>Product</th><th>Qty</th><th>Revenue</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header"><h5>Recent Orders</h5></div>
+                <div class="card-body">
+                    <table class="table table-sm" id="recentOrdersTable">
+                        <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delivery Stats -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header"><h5>Orders by Delivery Location</h5></div>
+                <div class="card-body">
+                    <canvas id="deliveryChart" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let salesChart, categoryChart, deliveryChart;
+
+function loadDashboard() {
+    const days = document.getElementById('dateRange').value;
+    
+    fetch('/reports/api/sales/?days=' + days)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('totalRevenue').innerText = 'KES ' + data.total_revenue.toLocaleString();
+            document.getElementById('totalOrders').innerText = data.total_orders;
+            document.getElementById('avgOrderValue').innerText = 'KES ' + data.average_order_value.toLocaleString();
+            
+            if (salesChart) salesChart.destroy();
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.daily_sales.map(d => d.day),
+                    datasets: [{
+                        label: 'Revenue (KES)',
+                        data: data.daily_sales.map(d => d.revenue),
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                }
+            });
+        });
+    
+    fetch('/reports/api/top-products/?days=' + days + '&limit=5')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#topProductsTable tbody');
+            tbody.innerHTML = data.map(p => 
+                '<tr><td>' + p.product_name + '</td><td>' + p.total_quantity + '</td><td>KES ' + p.total_revenue + '</td></tr>'
+            ).join('');
+        });
+    
+    fetch('/reports/api/payment-stats/?days=' + days)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('successRate').innerText = data.success_rate + '%';
+        });
+    
+    fetch('/reports/api/category-sales/?days=' + days)
+        .then(res => res.json())
+        .then(data => {
+            if (categoryChart) categoryChart.destroy();
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.map(c => c.category),
+                    datasets: [{
+                        data: data.map(c => c.revenue),
+                        backgroundColor: ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6']
+                    }]
+                }
+            });
+        });
+    
+    fetch('/reports/api/recent-orders/?limit=10')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.querySelector('#recentOrdersTable tbody');
+            tbody.innerHTML = data.map(o => 
+                '<tr><td>' + o.order_id + '</td><td>' + o.customer_name + '</td><td>KES ' + o.total_amount + '</td></tr>'
+            ).join('');
+        });
+    
+    fetch('/reports/api/delivery-stats/?days=' + days)
+        .then(res => res.json())
+        .then(data => {
+            if (deliveryChart) deliveryChart.destroy();
+            const ctx = document.getElementById('deliveryChart').getContext('2d');
+            deliveryChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.location),
+                    datasets: [{
+                        label: 'Number of Orders',
+                        data: data.map(d => d.orders),
+                        backgroundColor: '#3498db'
+                    }]
+                }
+            });
+        });
+}
+
+document.getElementById('dateRange').addEventListener('change', loadDashboard);
+loadDashboard();
+</script>
+{% endblock %}

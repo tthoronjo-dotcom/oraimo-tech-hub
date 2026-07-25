@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>{% block title %}Oraimo Tech Hub{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    {% block extra_css %}{% endblock %}
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        /* ===== SCROLL PROGRESS BAR ===== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2ecc71, #9b59b6, #2ecc71);
+            background-size: 200% 100%;
+            z-index: 9999;
+            width: 0%;
+            transition: width 0.1s ease;
+            animation: progressGlow 2s ease-in-out infinite;
+            border-radius: 0 2px 2px 0;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
+        }
+
+        @keyframes progressGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 200% 50%; }
+        }
+
+        /* ===== NAVIGATION WITH PREMIUM EFFECTS ===== */
+        .navbar {
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(46, 204, 113, 0.2);
+            transition: all 0.4s ease;
+            padding: 18px 0;
+            position: relative;
+        }
+        
+        .navbar.scrolled {
+            padding: 8px 0;
+            background: rgba(0, 0, 0, 0.95) !important;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .navbar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #2ecc71, #9b59b6, transparent);
+            background-size: 200% 100%;
+            transition: width 0.8s ease;
+            border-radius: 2px;
+        }
+
+        .navbar.scrolled::after {
+            width: 100%;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 200% 50%; }
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, #2ecc71, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: logoBreathe 4s ease-in-out infinite;
+            position: relative;
+            z-index: 5;
+        }
+
+        @keyframes logoBreathe {
+            0%, 100% { filter: drop-shadow(0 0 4px rgba(46, 204, 113, 0.2)); }
+            50% { filter: drop-shadow(0 0 16px rgba(46, 204, 113, 0.5)); }
+        }
+        
+        .navbar-dark .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.8);
+            transition: color 0.3s;
+            padding: 8px 16px;
+            position: relative;
+        }
+        
+        .navbar-dark .navbar-nav .nav-link:hover {
+            color: #2ecc71;
+        }
+
+        .navbar-dark .navbar-nav .nav-link.active {
+            color: #2ecc71 !important;
+        }
+
+        .nav-underline {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #2ecc71, #9b59b6);
+            border-radius: 2px;
+            transition: left 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 5;
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.2);
+        }
+
+        .nav-underline.visible {
+            opacity: 1;
+        }
+
+        .navbar-nav {
+            position: relative;
+        }
+        
+        /* ===== SEARCH BAR ===== */
+        #searchInput {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 10px 0 0 10px;
+        }
+
+        #searchInput:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #2ecc71;
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.1);
+            color: #fff;
+        }
+
+        #searchInput::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .input-group .btn-outline-success {
+            border-radius: 0 10px 10px 0;
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #2ecc71;
+        }
+
+        .input-group .btn-outline-success:hover {
+            background: #2ecc71;
+            color: #1a1a2e;
+            border-color: #2ecc71;
+        }
+
+        .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(20, 20, 40, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0 0 12px 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin-top: 2px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .autocomplete-results .result-item {
+            padding: 10px 15px;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .autocomplete-results .result-item:hover {
+            background: rgba(46, 204, 113, 0.1);
+            color: #fff;
+        }
+
+        .autocomplete-results .result-item .result-name {
+            font-weight: 500;
+        }
+
+        .autocomplete-results .result-item .result-price {
+            color: #2ecc71;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .autocomplete-results .result-item .result-category {
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            margin-left: 8px;
+        }
+
+        .autocomplete-results .no-results {
+            padding: 15px;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+        }
+
+        .autocomplete-results::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .autocomplete-results::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .autocomplete-results::-webkit-scrollbar-thumb {
+            background: #2ecc71;
+            border-radius: 10px;
+        }
+
+        .mobile-search {
+            display: none;
+        }
+
+        .mobile-search .autocomplete-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            margin-top: 0;
+            border-radius: 0 0 12px 12px;
+            background: rgba(20, 20, 40, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        @media (max-width: 991.98px) {
+            .mobile-search {
+                display: block !important;
+            }
+            .navbar {
+                padding: 12px 0 !important;
+                background: rgba(0, 0, 0, 0.95) !important;
+                backdrop-filter: blur(16px) !important;
+            }
+            .navbar.scrolled {
+                padding: 8px 0 !important;
+            }
+            .nav-underline {
+                display: none !important;
+            }
+            .navbar-nav .nav-link {
+                padding: 10px 16px !important;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .navbar .d-flex.w-50 {
+                width: 40% !important;
+            }
+        }
+
+        /* ===== DELIVERY BANNER ===== */
+        .delivery-banner {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d, #4a1d6d);
+            color: white;
+            padding: 10px 0;
+            font-size: 14px;
+            text-align: center;
+            border-bottom: 2px solid #2ecc71;
+        }
+        
+        .delivery-banner .container .row div {
+            padding: 5px 0;
+        }
+        
+        /* ===== MAIN CONTENT WRAPPER ===== */
+        .main-wrapper {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 50%, rgba(74, 29, 109, 0.9) 100%);
+            color: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(46, 204, 113, 0.05) 0%, transparent 70%);
+            animation: rotateGlow 20s linear infinite;
+        }
+        
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .hero-section .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-section h1 {
+            background: linear-gradient(135deg, #2ecc71, #9b59b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-section .btn-light {
+            background: linear-gradient(135deg, #2ecc71, #9b59b6);
+            color: white;
+            border: none;
+            font-weight: bold;
+            padding: 12px 40px;
+            transition: transform 0.3s;
+        }
+        
+        .hero-section .btn-light:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(46, 204, 113, 0.3);
+        }
+        
+        /* ===== CATEGORY CARDS ===== */
+        .category-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            cursor: pointer;
+            color: white;
+            border-bottom: 3px solid #2ecc71;
+            padding: 15px;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(155, 89, 182, 0.3);
+            border-bottom: 3px solid #9b59b6;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* ===== PRODUCT CARDS ===== */
+        .product-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-color: rgba(46, 204, 113, 0.3);
+        }
+        
+        .product-card .card-body {
+            color: white;
+        }
+        
+        .product-card .card-title {
+            color: white;
+        }
+        
+        .product-title {
+            color: white !important;
+        }
+        
+        .product-title:hover {
+            color: #2ecc71 !important;
+        }
+        
+        /* ===== PRODUCT IMAGES ===== */
+        .product-image {
+            height: 280px;
+            width: 100%;
+            object-fit: contain;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+        
+        .product-detail-image {
+            max-height: 550px;
+            width: 100%;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-detail-image:hover {
+            transform: scale(1.02);
+        }
+        
+        /* ===== LIGHTBOX ===== */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.92);
+            animation: fadeIn 0.3s;
+        }
+        
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        }
+        
+        .close-lightbox {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-lightbox:hover {
+            color: #2ecc71;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            color: white;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            transform: scale(1.02);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #1a1a1a, #4a1d6d);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2ecc71, #9b59b6);
+            border-color: white;
+            color: white;
+            transform: scale(1.02);
+        }
+        
+        .btn,
+        .btn-primary,
+        .btn-secondary,
+        .btn-success,
+        .btn-danger,
+        .btn-warning,
+        .btn-info,
+        .btn-light,
+        .btn-dark,
+        .btn-link,
+        .btn-continue,
+        .btn-checkout,
+        .btn-place-order,
+        .btn-track-order,
+        .btn-track,
+        .btn-remove,
+        a.btn,
+        button.btn,
+        input.btn {
+            color: #ffffff !important;
+        }
+
+        .btn-checkout i,
+        .btn-place-order i,
+        .btn-continue i,
+        .btn-track i,
+        .btn-remove i {
+            color: #ffffff !important;
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+        .btn:hover,
+        .btn:focus,
+        .btn:active,
+        .btn-continue:hover,
+        .btn-continue:focus,
+        .btn-checkout:hover,
+        .btn-checkout:focus,
+        .btn-place-order:hover,
+        .btn-place-order:focus,
+        .btn-track-order:hover,
+        .btn-track-order:focus,
+        .btn-track:hover,
+        .btn-track:focus,
+        a.btn:hover,
+        a.btn:focus {
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+        .btn-continue {
+            background: rgba(255, 255, 255, 0.08) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-continue:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, #ff9f43, #ff6b6b) !important;
+            border: none !important;
+            color: #ffffff !important;
+        }
+
+        .btn-checkout:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff9f43) !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+        .btn-place-order {
+            background: linear-gradient(135deg, #54a0ff, #00d2d3) !important;
+            border: none !important;
+            color: #ffffff !important;
+        }
+
+        .btn-place-order:hover {
+            background: linear-gradient(135deg, #00d2d3, #54a0ff) !important;
+            color: #ffffff !important;
+            opacity: 0.9;
+        }
+
+        .btn-track-order {
+            background: linear-gradient(135deg, #feca57, #ff9f43) !important;
+            border: none !important;
+            color: #1a1a2e !important;
+        }
+
+        .btn-track-order:hover {
+            background: linear-gradient(135deg, #ff9f43, #feca57) !important;
+            color: #1a1a2e !important;
+            opacity: 0.9;
+        }
+
+        .btn-remove {
+            background: rgba(255, 107, 107, 0.15) !important;
+            border: 1px solid rgba(255, 107, 107, 0.2) !important;
+            color: #ff6b6b !important;
+        }
+
+        .btn-remove:hover {
+            background: rgba(255, 107, 107, 0.3) !important;
+            border-color: #ff6b6b !important;
+            color: #ff6b6b !important;
+        }
+
+        .section-title {
+            color: white;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #2ecc71, #9b59b6);
+            border-radius: 2px;
+        }
+        
+        .alert-info {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            color: #a8e6cf;
+        }
+        
+        .alert-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ccc;
+        }
+        
+        .alert-warning {
+            background: rgba(241, 196, 15, 0.1);
+            border: 1px solid rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+        
+        .alert-success {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            color: #a8e6cf;
+        }
+        
+        /* ===== WHATSAPP FLOAT ===== */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 998;
+            transition: transform 0.3s;
+        }
+        
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+        }
+        
+        /* ===== FLOATING CART BUTTON ===== */
+        .floating-cart {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 999;
+            transition: all 0.3s ease;
+            text-decoration: none !important;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.1);
+            text-decoration: none !important;
+        }
+
+        .floating-cart .cart-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .floating-cart .cart-icon-wrapper:hover {
+            box-shadow: 0 6px 30px rgba(255, 107, 107, 0.6);
+            transform: scale(1.05);
+        }
+
+        .floating-cart .cart-icon-wrapper i {
+            font-size: 28px;
+            color: #ffffff;
+        }
+
+        .floating-cart .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #2ecc71;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #1a1a2e;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-cart .cart-badge.bounce {
+            animation: badgeBounce 0.5s ease;
+        }
+
+        @keyframes badgeBounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.8); }
+            50% { transform: scale(0.8); }
+            70% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* ===== FLOATING CART POP ANIMATION ===== */
+        .floating-cart.pop {
+            animation: cartPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes cartPop {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.3) rotate(-10deg); }
+            40% { transform: scale(0.9) rotate(5deg); }
+            60% { transform: scale(1.1) rotate(-3deg); }
+            80% { transform: scale(0.95); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .floating-cart .cart-badge.pulse {
+            animation: badgePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @media (max-width: 768px) {
+            .floating-cart .cart-icon-wrapper {
+                width: 50px;
+                height: 50px;
+            }
+            
+            .floating-cart .cart-icon-wrapper i {
+                font-size: 24px;
+            }
+            
+            .floating-cart .cart-badge {
+                min-width: 20px;
+                height: 20px;
+                font-size: 10px;
+                top: -6px;
+                right: -6px;
+            }
+            
+            .floating-cart {
+                bottom: 80px;
+                right: 15px;
+            }
+            
+            .whatsapp-float {
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .whatsapp-float img {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(46, 204, 113, 0.1);
+        }
+        
+        footer p,
+        footer .text-muted {
+            color: #ffffff !important;
+        }
+        
+        .footer-links a {
+            text-decoration: none;
+            transition: color 0.3s;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .footer-links a:hover {
+            color: #2ecc71 !important;
+        }
+        
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(30, 30, 30, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            min-width: 280px;
+            max-width: 400px;
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideInRight 0.3s ease forwards;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast-success {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .toast-error {
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .toast-info {
+            border-left: 4px solid #54a0ff;
+        }
+
+        .toast .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast .toast-content {
+            flex: 1;
+        }
+
+        .toast .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .toast .toast-message {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .toast .toast-close {
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 18px;
+            background: none;
+            border: none;
+            transition: color 0.3s;
+        }
+
+        .toast .toast-close:hover {
+            color: #fff;
+        }
+
+        .toast-hide {
+            animation: slideOutRight 0.3s ease forwards;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .toast-container {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+            }
+            .toast {
+                min-width: auto;
+                max-width: 100%;
+            }
+        }
+
+        /* ===== CART BADGE ANIMATION ===== */
+        #basket-count {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        #basket-count.bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.5); }
+            50% { transform: scale(0.9); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* ===== CART ICON POP ===== */
+        .cart-icon.pop {
+            animation: cartIconPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes cartIconPop {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.5) rotate(-12deg); }
+            60% { transform: scale(0.85) rotate(6deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* ===== POPUP NOTIFICATION ===== */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-notification {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d2d);
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            border-radius: 20px;
+            padding: 35px 30px 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.8) translateY(-20px);
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .popup-notification.show {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-notification .popup-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .popup-notification .popup-content h3 {
+            color: #2ecc71;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .popup-notification .popup-content p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .popup-notification .popup-close {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border: none;
+            color: #1a1a2e;
+            font-weight: 700;
+            padding: 8px 35px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .popup-notification .popup-close:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 12px rgba(46, 204, 113, 0.25);
+        }
+
+        .popup-notification .popup-close:focus {
+            outline: none;
+        }
+
+        @media (max-width: 480px) {
+            .popup-notification {
+                padding: 25px 18px 20px;
+                max-width: 92%;
+            }
+            .popup-notification .popup-icon {
+                font-size: 36px;
+            }
+            .popup-notification .popup-content h3 {
+                font-size: 16px;
+            }
+            .popup-notification .popup-content p {
+                font-size: 13px;
+            }
+            .popup-notification .popup-close {
+                padding: 7px 25px;
+                font-size: 13px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .product-image {
+                height: 200px;
+                padding: 10px;
+            }
+            
+            .product-detail-image {
+                max-height: 350px;
+            }
+            
+            .close-lightbox {
+                font-size: 30px;
+                top: 10px;
+                right: 20px;
+            }
+            
+            .hero-section {
+                padding: 40px 0;
+                border-radius: 12px;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .delivery-banner .row div {
+                font-size: 12px;
+            }
+            
+            .main-wrapper {
+                padding: 10px;
+                margin: 10px 0;
+                border-radius: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-image {
+                height: 160px;
+                padding: 8px;
+            }
+            
+            .product-detail-image {
+                max-height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SCROLL PROGRESS BAR ===== -->
+    <div class="scroll-progress"></div>
+
+    <!-- ===== DELIVERY BANNER ===== -->
+    <div class="delivery-banner">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">🎉 FREE delivery on orders over KES 4,500</div>
+                <div class="col-md-4">📍 FREE delivery within Nairobi CBD</div>
+                <div class="col-md-4">⏱️ Delivered within 2 business days</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Oraimo Tech Hub</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- ===== SEARCH BAR WITH AUTOCOMPLETE ===== -->
+                <form class="d-flex mx-auto my-2 my-lg-0 w-100 w-lg-50 position-relative" method="GET" action="{% url 'product_list' %}" id="searchForm">
+                    <div class="input-group">
+                        <input class="form-control" type="search" name="q" placeholder="Search Oraimo products..." 
+                               value="{{ search_query }}" id="searchInput" aria-label="Search" autocomplete="off">
+                        <button class="btn btn-outline-success" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                    <div id="autocompleteResults" class="autocomplete-results"></div>
+                </form>
+                
+                <ul class="navbar-nav ms-auto" id="navLinks">
+                    <!-- ===== PRODUCTS ===== -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'product_list' %}"><i class="bi bi-grid"></i> Products</a>
+                    </li>
+                    
+                    <!-- ===== CART ===== -->
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="{% url 'basket:basket_detail' %}" id="cartLink">
+                            <i class="bi bi-cart cart-icon"></i> Cart
+                            <span class="badge bg-danger" id="basket-count">{{ basket_total|default:0 }}</span>
+                        </a>
+                    </li>
+                    
+                    <!-- ===== TRACK ORDER - FIXED: Added checkout: namespace ===== -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'checkout:track_order' %}"><i class="bi bi-truck"></i> Track</a>
+                    </li>
+                    
+                    <!-- ===== WHATSAPP ===== -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="whatsapp-nav-link"><i class="bi bi-whatsapp text-success"></i></a>
+                    </li>
+                    
+                    <!-- ===== AUTHENTICATION LINKS ===== -->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:profile' %}">
+                            <i class="bi bi-person"></i> {{ user.username }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form action="{% url 'accounts:logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-link nav-link" style="color: rgba(255,255,255,0.8); text-decoration: none; border: none; background: none; cursor: pointer;">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:login' %}"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'accounts:register' %}"><i class="bi bi-person-plus"></i> Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <!-- ===== GLIDING UNDERLINE ===== -->
+        <div class="nav-underline" id="navUnderline"></div>
+    </nav>
+
+    <!-- ===== MOBILE SEARCH BAR ===== -->
+    <div class="mobile-search bg-dark py-2 px-3 border-top border-secondary">
+        <form method="GET" action="{% url 'product_list' %}" class="w-100 position-relative" id="mobileSearchForm">
+            <div class="input-group">
+                <input class="form-control form-control-sm" type="search" name="q" placeholder="Search Oraimo products..." 
+                       value="{{ search_query }}" aria-label="Search" autocomplete="off" id="mobileSearchInput">
+                <button class="btn btn-outline-success btn-sm" type="submit">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+            <div class="autocomplete-results" id="mobileAutocompleteResults"></div>
+        </form>
+    </div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="py-4">
+        <div class="container">
+            <div class="main-wrapper">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5 class="text-success">Oraimo Tech Hub</h5>
+                    <p class="text-white">
+                        We are an online supplier of genuine Oraimo products in Kenya. 
+                        We are not the manufacturer.
+                    </p>
+                    <div class="mt-2">
+                        <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="{% url 'product_list' %}">Shop All Products</a></li>
+                        <li><a href="{% url 'checkout:track_order' %}">Track Your Order</a></li>
+                        <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms_of_service' %}">Terms of Service</a></li>
+                        <li><a href="{% url 'returns_policy' %}">Returns & Warranty</a></li>
+                        <li><a href="{% url 'faq_page' %}">FAQ</a></li>
+                        <li><a href="{% url 'contact:contact' %}">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2">
+                            <i class="bi bi-whatsapp text-success"></i> 
+                            <a href="https://wa.me/254715804141" class="text-white text-decoration-none" target="_blank">0715 804 141</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone text-primary"></i> 
+                            <a href="tel:+254715804141" class="text-white text-decoration-none">0715 804 141</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-envelope"></i> 
+                            <a href="mailto:info@oraimotechhub.co.ke" class="text-white text-decoration-none">info@oraimotechhub.co.ke</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-clock"></i> Mon-Fri: 9am - 5pm
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt"></i> Nairobi, Kenya
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <div class="text-center small">
+                <p class="text-white mb-1">&copy; 2025 Oraimo Tech Hub - Online Supplier of Genuine Oraimo Products</p>
+                <p class="text-white mb-0">Oraimo is a registered trademark of its respective owner. We are an independent online supplier.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== FLOATING CART BUTTON ===== -->
+    <a href="{% url 'basket:basket_detail' %}" 
+       class="floating-cart" 
+       id="floatingCart"
+       aria-label="View Cart">
+        <div class="cart-icon-wrapper">
+            <i class="bi bi-cart-fill"></i>
+            <span class="cart-badge" id="floatingCartBadge">{{ basket_total|default:0 }}</span>
+        </div>
+    </a>
+
+    <!-- ===== WHATSAPP FLOAT ===== -->
+    <a href="https://wa.me/254715804141?text=Hello%21%20I%27m%20interested%20in%20Oraimo%20products" 
+       class="whatsapp-float" target="_blank" aria-label="Chat on WhatsApp">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
+             alt="WhatsApp" width="50" height="50">
+    </a>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="close-lightbox">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== CSRF TOKEN HIDDEN INPUT ===== -->
+    <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ===== CSRF TOKEN =====
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // ===== TOAST NOTIFICATION =====
+        function showToast(message, type = 'success', title = '') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️'
+            };
+
+            const titles = {
+                success: 'Success!',
+                error: 'Error!',
+                info: 'Info'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+                <div class="toast-content">
+                    <div class="toast-title">${title || titles[type]}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.closest('.toast').remove()">&times;</button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast-hide');
+                    setTimeout(() => {
+                        if (toast.parentNode) toast.remove();
+                    }, 300);
+                }
+            }, 4000);
+
+            toast.addEventListener('click', function() {
+                this.classList.add('toast-hide');
+                setTimeout(() => {
+                    if (this.parentNode) this.remove();
+                }, 300);
+            });
+        }
+
+        // ===== POPUP NOTIFICATION =====
+        function showPopupNotification(title, message) {
+            var overlay = document.getElementById('popupOverlay');
+            if (overlay) {
+                overlay.parentNode.removeChild(overlay);
+            }
+
+            overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+            overlay.id = 'popupOverlay';
+            
+            var popup = document.createElement('div');
+            popup.className = 'popup-notification';
+            popup.id = 'popupNotification';
+            popup.innerHTML = `
+                <div class="popup-icon">✅</div>
+                <div class="popup-content">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                </div>
+                <button class="popup-close" id="popupCloseBtn">OK</button>
+            `;
+            
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+            
+            setTimeout(function() {
+                overlay.classList.add('show');
+                popup.classList.add('show');
+            }, 50);
+
+            document.getElementById('popupCloseBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                closePopup();
+            });
+
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    closePopup();
+                }
+            });
+
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    closePopup();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+        }
+
+        // ===== CLOSE POPUP =====
+        function closePopup() {
+            var overlay = document.getElementById('popupOverlay');
+            if (overlay) {
+                overlay.classList.remove('show');
+                var popup = document.getElementById('popupNotification');
+                if (popup) {
+                    popup.classList.remove('show');
+                }
+                setTimeout(function() {
+                    if (overlay.parentNode) {
+                        overlay.parentNode.removeChild(overlay);
+                    }
+                }, 300);
+            }
+        }
+
+        // ===== UPDATE FLOATING CART BADGE =====
+        function updateFloatingCartBadge(count) {
+            var badge = document.getElementById('floatingCartBadge');
+            var floatingCart = document.getElementById('floatingCart');
+            
+            if (badge) {
+                badge.innerText = count || 0;
+                
+                // Bounce animation on badge
+                badge.classList.remove('bounce');
+                void badge.offsetWidth;
+                badge.classList.add('bounce');
+                
+                // Show/hide badge based on count
+                if (count > 0) {
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+            
+            // Pop animation on the floating cart
+            if (floatingCart) {
+                floatingCart.classList.remove('pop');
+                void floatingCart.offsetWidth;
+                floatingCart.classList.add('pop');
+                setTimeout(function() {
+                    floatingCart.classList.remove('pop');
+                }, 700);
+            }
+        }
+
+        // ===== ADD TO BASKET =====
+        function addToBasket(variantId) {
+            var csrftoken = getCookie('csrftoken');
+            
+            if (!csrftoken) {
+                var tokenInput = document.getElementById('csrf-token');
+                if (tokenInput) {
+                    csrftoken = tokenInput.value;
+                }
+            }
+            
+            if (!csrftoken) {
+                showPopupNotification('❌ Error', 'CSRF token not found. Please refresh the page.');
+                return;
+            }
+
+            fetch('/basket/add/' + variantId + '/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({ quantity: '1' })
+            })
+            .then(function(response) {
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error('CSRF token invalid. Please refresh the page.');
+                    }
+                    throw new Error('Server error: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    var countSpan = document.getElementById('basket-count');
+                    
+                    if (countSpan) {
+                        countSpan.innerText = data.total_items;
+                        countSpan.classList.remove('bounce');
+                        void countSpan.offsetWidth;
+                        countSpan.classList.add('bounce');
+                    }
+                    
+                    // ===== UPDATE FLOATING CART BADGE WITH POP =====
+                    updateFloatingCartBadge(data.total_items);
+                    
+                    var cartIcon = document.querySelector('.cart-icon');
+                    if (cartIcon) {
+                        cartIcon.classList.remove('pop');
+                        void cartIcon.offsetWidth;
+                        cartIcon.classList.add('pop');
+                        setTimeout(function() {
+                            cartIcon.classList.remove('pop');
+                        }, 500);
+                    }
+                    
+                    var itemCount = data.total_items;
+                    var message = 'Item added to your cart!';
+                    if (itemCount > 1) {
+                        message = 'Item added! (' + itemCount + ' items in cart)';
+                    }
+                    
+                    showPopupNotification('✅ Item Added to Cart!', 'The item has been successfully added to your cart.');
+                    showToast(message, 'success', 'Added to Cart 🛒');
+                    
+                } else {
+                    showPopupNotification('❌ Error', 'Failed to add item to cart. Please try again.');
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                showPopupNotification('❌ Error', error.message || 'Failed to add item to cart. Please try again.');
+                showToast('Error adding to cart. Please try again.', 'error');
+            });
+        }
+
+        // ===== LIGHTBOX =====
+        function openLightbox(img) {
+            var lightbox = document.getElementById('lightbox');
+            var lightboxImg = document.getElementById('lightbox-img');
+            if (lightbox && lightboxImg) {
+                lightbox.style.display = 'block';
+                lightboxImg.src = img.src;
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeLightbox() {
+            var lightbox = document.getElementById('lightbox');
+            if (lightbox) {
+                lightbox.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+
+        // ===== WHATSAPP NAV LINK =====
+        document.addEventListener('DOMContentLoaded', function() {
+            var whatsappLink = document.getElementById('whatsapp-nav-link');
+            if (whatsappLink) {
+                whatsappLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.open('https://wa.me/254715804141?text=Hello! I\'m interested in Oraimo products', '_blank');
+                });
+            }
+            
+            // ===== INITIALIZE FLOATING CART BADGE =====
+            var initialCount = parseInt(document.getElementById('basket-count')?.innerText) || 0;
+            var floatingBadge = document.getElementById('floatingCartBadge');
+            if (floatingBadge) {
+                if (initialCount > 0) {
+                    floatingBadge.innerText = initialCount;
+                    floatingBadge.style.display = 'flex';
+                } else {
+                    floatingBadge.style.display = 'none';
+                }
+            }
+        });
+
+        // ===== ADD TO BASKET BUTTONS =====
+        document.addEventListener('click', function(e) {
+            var target = e.target.closest('.add-to-basket-btn');
+            if (target) {
+                e.preventDefault();
+                var variantId = target.getAttribute('data-variant-id');
+                if (variantId) {
+                    addToBasket(variantId);
+                }
+            }
+        });
+
+        // ===== WISHLIST BUTTONS =====
+        document.addEventListener('click', function(e) {
+            var target = e.target.closest('.wishlist-btn');
+            if (target) {
+                e.preventDefault();
+                var productId = target.getAttribute('data-product-id');
+                if (productId) {
+                    var csrftoken = getCookie('csrftoken');
+                    fetch('/shop/wishlist/toggle/' + productId + '/', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrftoken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.status === 'added') {
+                            target.textContent = '❤️';
+                        } else {
+                            target.textContent = '🤍';
+                        }
+                    });
+                }
+            }
+        });
+
+        // ===== SEARCH AUTOCOMPLETE =====
+        document.addEventListener('DOMContentLoaded', function() {
+            var searchInput = document.getElementById('searchInput');
+            var resultsContainer = document.getElementById('autocompleteResults');
+            var searchForm = document.getElementById('searchForm');
+            
+            if (!searchInput || !resultsContainer) return;
+            
+            function debounce(func, wait) {
+                var timeout;
+                return function() {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+            
+            var handleSearch = debounce(function() {
+                var query = searchInput.value.trim();
+                
+                if (query.length < 2) {
+                    resultsContainer.style.display = 'none';
+                    return;
+                }
+                
+                fetch('/shop/api/search/?q=' + encodeURIComponent(query))
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.length === 0) {
+                            resultsContainer.innerHTML = '<div class="no-results">No products found</div>';
+                            resultsContainer.style.display = 'block';
+                            return;
+                        }
+                        
+                        var html = '';
+                        for (var i = 0; i < data.length; i++) {
+                            var item = data[i];
+                            var name = item.name.length > 40 ? item.name.substring(0, 40) + '...' : item.name;
+                            html += '<a href="/shop/' + item.slug + '/" class="result-item">';
+                            html += '<span class="result-name">' + name + '</span>';
+                            if (item.price) {
+                                html += '<span class="result-price">KES ' + item.price + '</span>';
+                            }
+                            html += '</a>';
+                        }
+                        resultsContainer.innerHTML = html;
+                        resultsContainer.style.display = 'block';
+                    })
+                    .catch(function(error) {
+                        console.error('Autocomplete error:', error);
+                    });
+            }, 300);
+            
+            searchInput.addEventListener('input', handleSearch);
+            
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    resultsContainer.style.display = 'none';
+                    this.blur();
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!searchForm.contains(e.target)) {
+                    resultsContainer.style.display = 'none';
+                }
+            });
+        });
+
+        // ===== MOBILE SEARCH AUTOCOMPLETE =====
+        document.addEventListener('DOMContentLoaded', function() {
+            var mobileSearchInput = document.getElementById('mobileSearchInput');
+            var mobileResultsContainer = document.getElementById('mobileAutocompleteResults');
+            var mobileForm = document.getElementById('mobileSearchForm');
+            
+            if (!mobileSearchInput || !mobileResultsContainer) return;
+            
+            function debounce(func, wait) {
+                var timeout;
+                return function() {
+                    var context = this;
+                    var args = arguments;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function() {
+                        func.apply(context, args);
+                    }, wait);
+                };
+            }
+            
+            var handleMobileSearch = debounce(function() {
+                var query = mobileSearchInput.value.trim();
+                
+                if (query.length < 2) {
+                    mobileResultsContainer.style.display = 'none';
+                    return;
+                }
+                
+                fetch('/shop/api/search/?q=' + encodeURIComponent(query))
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        if (data.length === 0) {
+                            mobileResultsContainer.innerHTML = '<div class="no-results">No products found</div>';
+                            mobileResultsContainer.style.display = 'block';
+                            return;
+                        }
+                        
+                        var html = '';
+                        for (var i = 0; i < data.length; i++) {
+                            var item = data[i];
+                            var name = item.name.length > 35 ? item.name.substring(0, 35) + '...' : item.name;
+                            html += '<a href="/shop/' + item.slug + '/" class="result-item">';
+                            html += '<span class="result-name">' + name + '</span>';
+                            if (item.price) {
+                                html += '<span class="result-price">KES ' + item.price + '</span>';
+                            }
+                            html += '</a>';
+                        }
+                        mobileResultsContainer.innerHTML = html;
+                        mobileResultsContainer.style.display = 'block';
+                    })
+                    .catch(function(error) {
+                        console.error('Autocomplete error:', error);
+                    });
+            }, 300);
+            
+            mobileSearchInput.addEventListener('input', handleMobileSearch);
+            
+            mobileSearchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    mobileResultsContainer.style.display = 'none';
+                    this.blur();
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (mobileForm && !mobileForm.contains(e.target)) {
+                    mobileResultsContainer.style.display = 'none';
+                }
+            });
+        });
+
+        // ============================================================
+        // ===== NAVBAR EFFECTS =====
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // ===== SCROLL PROGRESS BAR =====
+            const progressBar = document.querySelector('.scroll-progress');
+            if (progressBar) {
+                window.addEventListener('scroll', function() {
+                    const h = document.documentElement;
+                    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+                    progressBar.style.width = scrolled + '%';
+                });
+            }
+
+            // ===== NAVBAR SCROLL SHRINK =====
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                window.addEventListener('scroll', function() {
+                    navbar.classList.toggle('scrolled', window.scrollY > 50);
+                });
+            }
+
+            // ===== GLIDING UNDERLINE =====
+            const nav = document.querySelector('.navbar-nav');
+            const underline = document.getElementById('navUnderline');
+
+            if (nav && underline) {
+                const activeLink = nav.querySelector('.nav-link.active');
+                if (activeLink) {
+                    setTimeout(function() {
+                        underline.style.width = activeLink.offsetWidth + 'px';
+                        underline.style.left = activeLink.offsetLeft + 'px';
+                        underline.classList.add('visible');
+                    }, 100);
+                }
+
+                function moveUnderline(el) {
+                    if (el) {
+                        underline.style.width = el.offsetWidth + 'px';
+                        underline.style.left = el.offsetLeft + 'px';
+                        underline.classList.add('visible');
+                    }
+                }
+
+                nav.querySelectorAll('.nav-link').forEach(function(link) {
+                    link.addEventListener('mouseenter', function() {
+                        moveUnderline(this);
+                    });
+                });
+
+                nav.addEventListener('mouseleave', function() {
+                    const active = nav.querySelector('.nav-link.active');
+                    if (active) {
+                        moveUnderline(active);
+                    } else {
+                        setTimeout(function() {
+                            if (!nav.querySelector('.nav-link:hover')) {
+                                underline.classList.remove('visible');
+                            }
+                        }, 300);
+                    }
+                });
+
+                window.addEventListener('resize', function() {
+                    const active = nav.querySelector('.nav-link.active');
+                    if (active) {
+                        moveUnderline(active);
+                    }
+                });
+            }
+        });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+
+{% block title %}Products - Oraimo Tech Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* ===== PRODUCTS SECTION — CLEAN, NO BACKGROUND FEATURES ===== */
+    .products-section {
+        position: relative;
+        border-radius: 24px;
+        padding: 30px 20px 40px;
+        margin-top: 10px;
+        background: linear-gradient(135deg, rgba(15, 12, 41, 0.9), rgba(36, 36, 62, 0.9));
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        min-height: 400px;
+    }
+
+    .products-section .container {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* ===== PRODUCT CARDS ===== */
+    .product-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        height: 100%;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        border-color: rgba(46, 204, 113, 0.3);
+    }
+
+    .product-card .card-body {
+        color: white;
+        text-align: center;
+        padding: 15px;
+    }
+
+    .product-card .card-body h6 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        min-height: 38px;
+    }
+
+    .product-card .card-body h6 a {
+        color: white !important;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .product-card .card-body h6 a:hover {
+        color: #2ecc71 !important;
+    }
+
+    .product-card .card-body .price {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2ecc71;
+        margin: 5px 0 10px;
+    }
+
+    .product-image {
+        height: 280px;
+        width: 100%;
+        object-fit: contain;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        transition: transform 0.3s ease;
+    }
+
+    .product-image:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+        border: none !important;
+        color: white !important;
+        font-weight: bold !important;
+        transition: transform 0.3s !important;
+        border-radius: 8px !important;
+        padding: 6px 12px !important;
+        font-size: 14px !important;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #27ae60, #219a52) !important;
+        transform: scale(1.02);
+        color: white !important;
+    }
+
+    /* ===== FILTER SECTION ===== */
+    .filter-section {
+        background: rgba(255,255,255,0.03);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .filter-section .btn-success {
+        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+        border: none !important;
+        color: white !important;
+        font-weight: bold !important;
+        border-radius: 10px;
+        padding: 6px 16px;
+        transition: all 0.3s;
+    }
+
+    .filter-section .btn-success:hover {
+        background: linear-gradient(135deg, #27ae60, #219a52) !important;
+        transform: scale(1.02);
+    }
+
+    .filter-section .btn-outline-secondary {
+        color: rgba(255, 255, 255, 0.7);
+        border-color: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        transition: all 0.3s;
+        background: transparent;
+    }
+
+    .filter-section .btn-outline-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .section-title {
+        color: #fff;
+        font-weight: 700;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 15px;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #2ecc71, #9b59b6);
+        border-radius: 2px;
+    }
+
+    .alert-info {
+        background: rgba(46, 204, 113, 0.1);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        color: #a8e6cf;
+        border-radius: 12px;
+    }
+
+    .pagination .page-link {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #fff;
+        transition: all 0.3s;
+        border-radius: 10px;
+        margin: 0 3px;
+    }
+
+    .pagination .page-link:hover {
+        background: rgba(46, 204, 113, 0.2);
+        border-color: #2ecc71;
+        color: #fff;
+    }
+
+    .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        border-color: #2ecc71;
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .product-image {
+            height: 200px;
+            padding: 10px;
+        }
+        .product-card .card-body h6 {
+            font-size: 13px;
+            min-height: 32px;
+        }
+        .product-card .card-body .price {
+            font-size: 16px;
+        }
+        .products-section {
+            padding: 20px 15px 30px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .product-image {
+            height: 160px;
+            padding: 8px;
+        }
+        .product-card .card-body h6 {
+            font-size: 12px;
+            min-height: 28px;
+        }
+        .product-card .card-body .price {
+            font-size: 14px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ===== PRODUCTS SECTION ===== -->
+<div class="products-section">
+    <div class="container">
+        <!-- ===== SEARCH RESULTS HEADER ===== -->
+        {% if search_query %}
+        <div class="alert alert-info mb-4">
+            <i class="bi bi-search"></i> 
+            Showing results for: <strong>"{{ search_query }}"</strong>
+            <span class="badge bg-secondary ms-2">{{ products.paginator.count }} results found</span>
+            <a href="{% url 'product_list' %}" class="btn btn-sm btn-outline-secondary ms-3">Clear Search</a>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="section-title">Our Products</h1>
+            <span style="color: rgba(255,255,255,0.4);">{{ products.paginator.count }} products found</span>
+        </div>
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div class="filter-section mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'product_list' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
+                       class="btn btn-sm {% if not active_category %}btn-success{% else %}btn-outline-secondary{% endif %}">All</a>
+                    {% for cat in categories %}
+                    <a href="?category={{ cat.slug }}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}" 
+                       class="btn btn-sm {% if active_category == cat.slug %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                        {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="d-flex gap-2 align-items-center">
+                    <span style="color: rgba(255,255,255,0.5); font-size: 13px;">Sort:</span>
+                    <a href="?{% if active_category %}category={{ active_category }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}sort=price_asc" 
+                       class="btn btn-sm {% if sort_by == 'price_asc' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                        <i class="bi bi-arrow-up"></i> Low to High
+                    </a>
+                    <a href="?{% if active_category %}category={{ active_category }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}sort=price_desc" 
+                       class="btn btn-sm {% if sort_by == 'price_desc' %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                        <i class="bi bi-arrow-down"></i> High to Low
+                    </a>
+                    <a href="?{% if active_category %}category={{ active_category }}&{% endif %}{% if search_query %}q={{ search_query }}&{% endif %}" 
+                       class="btn btn-sm {% if not sort_by %}btn-success{% else %}btn-outline-secondary{% endif %}">
+                        <i class="bi bi-clock"></i> Newest
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PRODUCTS GRID ===== -->
+        <div class="row g-4" id="product-grid">
+            {% for product in products %}
+            <div class="col-md-3 col-6">
+                <div class="card product-card h-100">
+                    <a href="{% url 'product_detail' product.slug %}">
+                        {% if product.main_image %}
+                        <img src="{{ product.main_image.url }}" class="product-image" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 280px;">
+                            <span class="text-muted" style="color: rgba(255,255,255,0.3) !important;">No Image</span>
+                        </div>
+                        {% endif %}
+                    </a>
+                    <div class="card-body text-center">
+                        <a href="{% url 'product_detail' product.slug %}" class="text-decoration-none">
+                            <h6 class="product-title" style="color: white !important;">{{ product.name|truncatechars:30 }}</h6>
+                        </a>
+                        <p class="fw-bold text-success fs-5">KES {{ product.base_price|floatformat:0 }}</p>
+                        {% with product.variants.first as variant %}
+                            {% if variant %}
+                            <button class="btn btn-primary btn-sm w-100 add-to-basket-btn" data-variant-id="{{ variant.id }}">
+                                <i class="bi bi-cart-plus"></i> Add to Cart
+                            </button>
+                            {% endif %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5" style="color: rgba(255,255,255,0.5);">
+                <p>No products available. Please add products in admin panel.</p>
+                <a href="/adteddymin/" class="btn btn-primary">Go to Admin</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- ===== PAGINATION ===== -->
+        {% if products.has_other_pages %}
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                {% if products.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page=1{% if active_category %}&category={{ active_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">&laquo; First</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ products.previous_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">Previous</a></li>
+                {% endif %}
+                
+                <li class="page-item active"><span class="page-link">{{ products.number }}</span></li>
+                
+                {% if products.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ products.next_page_number }}{% if active_category %}&category={{ active_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{ products.paginator.num_pages }}{% if active_category %}&category={{ active_category }}{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}{% if sort_by %}&sort={{ sort_by }}{% endif %}">Last &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ===== ADD TO CART BUTTONS =====
+        var buttons = document.querySelectorAll('.add-to-basket-btn');
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener('click', function() {
+                var variantId = this.getAttribute('data-variant-id');
+                if (variantId) {
+                    addToBasket(variantId);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

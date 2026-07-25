@@ -1,0 +1,619 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - Oraimo Tech Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .checkout-container h4 {
+        color: #ffffff;
+    }
+    
+    .checkout-container .section-title::after {
+        background: linear-gradient(90deg, #54a0ff, #00d2d3);
+    }
+    
+    .checkout-form .form-label {
+        color: #ffffff;
+        font-weight: 500;
+        font-size: 14px;
+    }
+    
+    .checkout-form .form-control {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+    
+    .checkout-form .form-control:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #54a0ff;
+        box-shadow: 0 0 20px rgba(84, 160, 255, 0.1);
+        color: #ffffff;
+    }
+    
+    .checkout-form .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .checkout-form .form-control option {
+        background: #1a1a2e;
+        color: #ffffff;
+    }
+    
+    .checkout-form .form-select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        padding: 12px 15px;
+        border-radius: 10px;
+        width: 100%;
+        cursor: pointer;
+    }
+    
+    .checkout-form .form-select:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #54a0ff;
+        box-shadow: 0 0 20px rgba(84, 160, 255, 0.1);
+        color: #ffffff;
+    }
+    
+    .checkout-form .form-select option {
+        background: #1a1a2e;
+        color: #ffffff;
+        padding: 8px;
+    }
+    
+    .checkout-form .form-select option:disabled {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .checkout-form .form-check-label {
+        color: #ffffff;
+        font-size: 14px;
+    }
+    
+    .checkout-form .form-check-label small {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .checkout-form .form-check-input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .checkout-form .form-check-input:checked {
+        background-color: #54a0ff;
+        border-color: #54a0ff;
+    }
+    
+    .checkout-form .form-check-input:focus {
+        box-shadow: 0 0 10px rgba(84, 160, 255, 0.2);
+    }
+    
+    .checkout-form .text-muted {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    .checkout-form .text-danger {
+        color: #ff6b6b !important;
+        font-size: 13px;
+    }
+    
+    .order-summary {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .order-summary .summary-item {
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .order-summary .summary-item:last-child {
+        border-bottom: none;
+    }
+    
+    .order-summary .label {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .order-summary .value {
+        color: #ffffff;
+    }
+    
+    .order-summary .total-label {
+        color: #54a0ff;
+        font-size: 1.1rem;
+    }
+    
+    .order-summary .total-value {
+        color: #54a0ff;
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+    
+    .btn-place-order {
+        background: linear-gradient(135deg, #54a0ff, #00d2d3);
+        border: none;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 12px;
+        border-radius: 10px;
+        width: 100%;
+    }
+    
+    .btn-place-order:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(84, 160, 255, 0.3);
+        color: #ffffff;
+    }
+    
+    .alert-info {
+        background: rgba(84, 160, 255, 0.1);
+        border: 1px solid rgba(84, 160, 255, 0.2);
+        color: #a8d0ff;
+    }
+    
+    .alert-warning {
+        background: rgba(255, 159, 67, 0.1);
+        border: 1px solid rgba(255, 159, 67, 0.2);
+        color: #ffd8a8;
+    }
+    
+    .alert-success {
+        background: rgba(46, 204, 113, 0.1);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        color: #a8e6cf;
+    }
+    
+    .alert-danger {
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        color: #ffa8a8;
+    }
+    
+    .cod-payment-card {
+        background: rgba(46, 204, 113, 0.08);
+        border: 2px solid rgba(46, 204, 113, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s;
+    }
+    
+    .cod-payment-card:hover {
+        background: rgba(46, 204, 113, 0.12);
+        border-color: #2ecc71;
+    }
+    
+    .cod-payment-card .cod-icon {
+        font-size: 2rem;
+        color: #2ecc71;
+        margin-right: 15px;
+    }
+    
+    .cod-payment-card .cod-title {
+        color: #2ecc71;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .cod-payment-card .cod-details {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+    }
+    
+    .cod-payment-card .cod-badges {
+        margin-top: 10px;
+    }
+    
+    .cod-payment-card .cod-badges .badge {
+        margin-right: 8px;
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    
+    .free-delivery-badge {
+        background: rgba(46, 204, 113, 0.15);
+        color: #2ecc71;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .delivery-threshold-note {
+        background: rgba(46, 204, 113, 0.08);
+        border: 1px solid rgba(46, 204, 113, 0.15);
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin-top: 15px;
+        color: #a8e6cf;
+        font-size: 13px;
+        text-align: center;
+    }
+    
+    .delivery-threshold-note strong {
+        color: #2ecc71;
+    }
+    
+    .delivery-notes-field {
+        margin-top: 10px;
+    }
+    
+    .delivery-notes-field textarea {
+        resize: vertical;
+        min-height: 60px;
+    }
+    
+    /* ===== DELIVERY LOCATIONS TABLE ===== */
+    .delivery-locations-table {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-top: 10px;
+    }
+    
+    .delivery-locations-table table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    
+    .delivery-locations-table th {
+        color: #54a0ff;
+        font-weight: 600;
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: left;
+    }
+    
+    .delivery-locations-table td {
+        color: rgba(255, 255, 255, 0.7);
+        padding: 6px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    
+    .delivery-locations-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .delivery-locations-table .free-badge {
+        color: #2ecc71;
+        font-weight: 600;
+    }
+    
+    .delivery-locations-table .fee-amount {
+        color: #ff9f43;
+        font-weight: 500;
+    }
+    
+    @media (max-width: 768px) {
+        .checkout-container {
+            padding: 15px;
+        }
+        .order-summary {
+            padding: 15px;
+        }
+        .cod-payment-card {
+            padding: 15px;
+        }
+        .cod-payment-card .cod-icon {
+            font-size: 1.5rem;
+            margin-right: 10px;
+        }
+        .delivery-locations-table {
+            font-size: 11px;
+        }
+        .delivery-locations-table th,
+        .delivery-locations-table td {
+            padding: 4px 8px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+    <div class="row">
+        <div class="col-md-7">
+            <h4 class="mb-4 section-title">Delivery Information</h4>
+            <form method="POST" class="checkout-form" id="checkoutForm">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Please fix the errors below.
+                </div>
+                {% endif %}
+                
+                <div class="mb-3">
+                    <label class="form-label">Full Name *</label>
+                    {{ form.customer_name }}
+                    {% if form.customer_name.errors %}
+                        <small class="text-danger">{{ form.customer_name.errors }}</small>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phone Number *</label>
+                    {{ form.customer_phone }}
+                    <small class="text-muted">We'll contact you on this number for delivery</small>
+                    {% if form.customer_phone.errors %}
+                        <small class="text-danger">{{ form.customer_phone.errors }}</small>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email (Optional)</label>
+                    {{ form.customer_email }}
+                    {% if form.customer_email.errors %}
+                        <small class="text-danger">{{ form.customer_email.errors }}</small>
+                    {% endif %}
+                </div>
+                
+                <!-- ===== DELIVERY LOCATION DROPDOWN - FIXED ===== -->
+                <div class="mb-3">
+                    <label class="form-label" for="id_delivery_location">Delivery Location *</label>
+                    <select name="delivery_location" class="form-select" id="id_delivery_location" required>
+                        <option value="">— Select your delivery location —</option>
+                        <option value="Nairobi CBD">📍 Nairobi CBD - FREE</option>
+                        <option value="Nairobi (Within City)">🏙️ Nairobi (Within City) - KES 250</option>
+                        <option value="Along Thika Road">🛣️ Along Thika Road - KES 250</option>
+                        <option value="Along Waiyaki Way">🛣️ Along Waiyaki Way - KES 250</option>
+                        <option value="Nairobi Outskirts">🌳 Nairobi Outskirts - KES 300</option>
+                    </select>
+                    <small class="text-muted">Select your delivery area</small>
+                    {% if form.delivery_location.errors %}
+                        <small class="text-danger">{{ form.delivery_location.errors }}</small>
+                    {% endif %}
+                </div>
+                
+                <!-- ===== DELIVERY LOCATIONS TABLE ===== -->
+                <div class="delivery-locations-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Location</th>
+                                <th>Fee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>📍 Nairobi CBD</td>
+                                <td class="free-badge">FREE</td>
+                            </tr>
+                            <tr>
+                                <td>🏙️ Nairobi (Within City)</td>
+                                <td class="fee-amount">KES 250</td>
+                            </tr>
+                            <tr>
+                                <td>🛣️ Along Thika Road</td>
+                                <td class="fee-amount">KES 250</td>
+                            </tr>
+                            <tr>
+                                <td>🛣️ Along Waiyaki Way</td>
+                                <td class="fee-amount">KES 250</td>
+                            </tr>
+                            <tr>
+                                <td>🌳 Nairobi Outskirts</td>
+                                <td class="fee-amount">KES 300</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mb-3 mt-3">
+                    <label class="form-label">Delivery Address *</label>
+                    {{ form.delivery_address }}
+                    <small class="text-muted">Building name, street, landmark</small>
+                    {% if form.delivery_address.errors %}
+                        <small class="text-danger">{{ form.delivery_address.errors }}</small>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3 delivery-notes-field">
+                    <label class="form-label">Delivery Notes (Optional)</label>
+                    {{ form.delivery_notes }}
+                    <small class="text-muted">Any special instructions for delivery?</small>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Payment Method</label>
+                    
+                    <div class="cod-payment-card">
+                        <div class="d-flex align-items-start">
+                            <div class="cod-icon">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                            <div>
+                                <div class="cod-title">Pay on Delivery (COD)</div>
+                                <div class="cod-details">
+                                    Pay when your order arrives. We accept cash or M-Pesa.
+                                </div>
+                                <div class="cod-badges">
+                                    <span class="badge bg-success">✓ No Payment Required Now</span>
+                                    <span class="badge bg-info">✓ Cash or M-Pesa Accepted</span>
+                                    <span class="badge bg-warning text-dark">✓ Pay at Your Doorstep</span>
+                                </div>
+                                <div class="mt-2 small text-muted">
+                                    <i class="bi bi-shield-check text-success"></i>
+                                    Your order will be processed immediately. Pay when you receive your items.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="payment_method" value="pay_on_delivery">
+                </div>
+                
+                <div class="form-check mb-3">
+                    {{ form.is_cbd }}
+                    <label class="form-check-label" for="{{ form.is_cbd.id_for_label }}">
+                        <i class="bi bi-building text-primary"></i>
+                        CBD Delivery <span class="text-success">(Free Delivery)</span>
+                    </label>
+                    <small class="text-muted d-block">Check this if your delivery address is within Nairobi CBD</small>
+                </div>
+                
+                <div class="form-check mb-3">
+                    {{ form.marketing_consent }}
+                    <label class="form-check-label" for="{{ form.marketing_consent.id_for_label }}">
+                        I agree to receive order updates and offers via WhatsApp. Reply STOP to opt out anytime.
+                    </label>
+                </div>
+                
+                <div class="alert alert-success small">
+                    <i class="bi bi-check-circle-fill"></i> 
+                    <strong>Simple & Easy:</strong> No payment required now. Pay when your order is delivered!
+                </div>
+                
+                <div class="delivery-threshold-note">
+                    <i class="bi bi-gift"></i> 
+                    <strong>FREE delivery</strong> on orders over <strong>KES 4,500</strong> (any location outside CBD)!
+                </div>
+                
+                <button type="submit" class="btn btn-place-order mt-3">
+                    <i class="bi bi-check-circle"></i> Place Order
+                </button>
+            </form>
+        </div>
+        
+        <div class="col-md-5 mt-4 mt-md-0">
+            <div class="order-summary">
+                <h5 style="color: #54a0ff; margin-bottom: 15px;">Order Summary</h5>
+                
+                <div class="summary-item d-flex justify-content-between">
+                    <span class="label">Subtotal</span>
+                    <span class="value" id="subtotal-display">KES {{ basket_subtotal|floatformat:0 }}</span>
+                </div>
+                <div class="summary-item d-flex justify-content-between">
+                    <span class="label">Items</span>
+                    <span class="value" id="items-display">{{ basket_total }} items</span>
+                </div>
+                <div class="summary-item d-flex justify-content-between">
+                    <span class="label">Delivery Fee</span>
+                    <span class="value" id="delivery-fee-display">
+                        <span class="free-delivery-badge">FREE</span>
+                    </span>
+                </div>
+                
+                <hr style="border-color: rgba(255,255,255,0.05);">
+                
+                <div class="d-flex justify-content-between">
+                    <span class="total-label">Total to Pay on Delivery</span>
+                    <span class="total-value" id="total-display">KES {{ basket_subtotal|floatformat:0 }}</span>
+                </div>
+                
+                <div class="alert alert-success mt-3 small" id="freeDeliveryMessage" style="display: none;">
+                    <i class="bi bi-gift-fill"></i> <strong>🎉 FREE delivery applied!</strong>
+                </div>
+                
+                <div class="alert alert-info mt-2 small" id="addToCartMessage" style="display: none;">
+                    <i class="bi bi-cart-plus"></i> 
+                    Add <strong id="amountToFree">KES 0</strong> more to get <strong>FREE delivery</strong>!
+                </div>
+                
+                <div class="alert alert-warning mt-2 small">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Pay on Delivery:</strong> Total amount due when your order arrives.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('checkoutForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                var requiredFields = form.querySelectorAll('[required]');
+                var valid = true;
+                
+                requiredFields.forEach(function(field) {
+                    if (!field.value.trim()) {
+                        field.style.borderColor = '#ff6b6b';
+                        field.style.boxShadow = '0 0 15px rgba(255, 107, 107, 0.2)';
+                        valid = false;
+                    } else {
+                        field.style.borderColor = 'rgba(255,255,255,0.1)';
+                        field.style.boxShadow = 'none';
+                    }
+                });
+                
+                if (!valid) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields.');
+                }
+            });
+        }
+    });
+    
+    // ===== DELIVERY FEE CALCULATION =====
+    var subtotalElement = document.getElementById('subtotal-display');
+    var subtotalText = subtotalElement ? subtotalElement.innerText.replace('KES ', '').trim() : '0';
+    var subtotal = parseFloat(subtotalText) || 0;
+    
+    var freeThreshold = 4500;
+    
+    var deliveryFees = {
+        'Nairobi CBD': 0,
+        'Nairobi (Within City)': 250,
+        'Along Thika Road': 250,
+        'Along Waiyaki Way': 250,
+        'Nairobi Outskirts': 300
+    };
+    
+    var locationSelect = document.getElementById('id_delivery_location');
+    var feeSpan = document.getElementById('delivery-fee-display');
+    var totalSpan = document.getElementById('total-display');
+    var freeMsg = document.getElementById('freeDeliveryMessage');
+    var addMsg = document.getElementById('addToCartMessage');
+    var amountSpan = document.getElementById('amountToFree');
+    
+    function updateTotals() {
+        var location = locationSelect.value;
+        var fee = deliveryFees[location] || 0;
+        
+        var isFree = (location === 'Nairobi CBD' || subtotal >= freeThreshold);
+        var total = subtotal + (isFree ? 0 : fee);
+        
+        if (isFree) {
+            feeSpan.innerHTML = '<span class="free-delivery-badge">FREE</span>';
+            freeMsg.style.display = 'block';
+            addMsg.style.display = 'none';
+        } else {
+            feeSpan.innerHTML = 'KES ' + fee;
+            freeMsg.style.display = 'none';
+            
+            var amountNeeded = freeThreshold - subtotal;
+            if (amountNeeded > 0 && location !== 'Nairobi CBD' && location !== '') {
+                amountSpan.innerHTML = 'KES ' + amountNeeded.toLocaleString();
+                addMsg.style.display = 'block';
+            } else {
+                addMsg.style.display = 'none';
+            }
+        }
+        
+        totalSpan.innerHTML = 'KES ' + total;
+    }
+    
+    if (locationSelect) {
+        locationSelect.addEventListener('change', updateTotals);
+        // Initial update
+        updateTotals();
+    }
+</script>
+{% endblock %}

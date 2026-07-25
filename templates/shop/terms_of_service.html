@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Terms of Service - Oraimo Tech Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="policy-card">
+                <h1 class="text-center mb-4 section-title">Terms of Service</h1>
+                <p class="text-center text-muted mb-4">Last Updated: July 2026</p>
+
+                <div class="policy-content">
+                    <h4>1. Acceptance of Terms</h4>
+                    <p>By using our website and placing orders, you agree to these Terms of Service. If you do not agree, please do not use our services.</p>
+
+                    <h4>2. Product Information</h4>
+                    <ul>
+                        <li>We are an online supplier of genuine Oraimo products</li>
+                        <li>We are not the manufacturer</li>
+                        <li>Product descriptions and images are for reference only</li>
+                        <li>Prices are subject to change without notice</li>
+                    </ul>
+
+                    <h4>3. Orders and Payments</h4>
+                    <ul>
+                        <li>Orders are subject to availability</li>
+                        <li>We reserve the right to cancel orders</li>
+                        <li>Payment must be completed before order fulfillment</li>
+                        <li>Delivery fees are calculated at checkout</li>
+                    </ul>
+
+                    <h4>4. Delivery</h4>
+                    <ul>
+                        <li>We deliver within Nairobi and other parts of Kenya</li>
+                        <li>Delivery time is typically 2 business days</li>
+                        <li>Free delivery on orders over KES 4,500</li>
+                        <li>Delivery delays may occur due to circumstances beyond our control</li>
+                    </ul>
+
+                    <h4>5. Returns and Refunds</h4>
+                    <ul>
+                        <li>Products must be returned within 14 days of delivery</li>
+                        <li>Products must be in original condition</li>
+                        <li>Refunds are processed within 5-7 business days</li>
+                        <li>Return shipping costs are the customer's responsibility</li>
+                    </ul>
+
+                    <h4>6. Disclaimer</h4>
+                    <p>We are an independent online supplier. Oraimo is a registered trademark of its respective owner. We are not affiliated with or endorsed by the manufacturer.</p>
+
+                    <h4>7. Contact</h4>
+                    <ul>
+                        <li><strong>Email:</strong> info@oraimotechhub.co.ke</li>
+                        <li><strong>Phone:</strong> 0715 804 141</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .policy-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .policy-content h4 {
+        color: #2ecc71;
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+    .policy-content p, .policy-content li {
+        color: rgba(255,255,255,0.8);
+        line-height: 1.8;
+    }
+    .policy-content ul {
+        padding-left: 20px;
+    }
+    .policy-content ul li {
+        margin-bottom: 8px;
+    }
+    .section-title {
+        color: white;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #2ecc71, #9b59b6);
+        border-radius: 2px;
+    }
+    @media (max-width: 768px) {
+        .policy-card { padding: 20px; }
+    }
+</style>
+{% endblock %}

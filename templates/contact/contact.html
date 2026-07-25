@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Oraimo Tech Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .contact-container {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .contact-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .contact-card label {
+        color: rgba(255,255,255,0.8);
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+    .contact-card .form-control {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        color: #fff !important;
+        border-radius: 10px !important;
+        padding: 10px 15px !important;
+        width: 100% !important;
+    }
+    .contact-card .form-control:focus {
+        border-color: #2ecc71 !important;
+        box-shadow: 0 0 20px rgba(46,204,113,0.1) !important;
+        outline: none !important;
+    }
+    .contact-card .form-control::placeholder {
+        color: rgba(255,255,255,0.3);
+    }
+    
+    /* ===== CAPTCHA STYLING ===== */
+    .captcha-wrapper {
+        margin: 15px 0;
+        background: rgba(255,255,255,0.05);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .captcha-wrapper .captcha {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    .captcha-wrapper .captcha img {
+        border-radius: 8px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: #fff;
+    }
+    .captcha-wrapper .captcha input {
+        flex: 1;
+        min-width: 150px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.15);
+        border-radius: 8px;
+        padding: 8px 12px;
+        color: #fff;
+    }
+    .captcha-wrapper .captcha input:focus {
+        border-color: #2ecc71;
+        outline: none;
+    }
+    
+    /* ===== SEND BUTTON — NAVY BLUE WITH GREEN BORDER (Matches Add to Cart) ===== */
+    .btn-send {
+        background: linear-gradient(135deg, #1a1a1a, #4a1d6d) !important;
+        border: 1px solid #2ecc71 !important;
+        color: #2ecc71 !important;
+        font-weight: bold !important;
+        padding: 12px 0 !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+        transition: all 0.3s !important;
+        cursor: pointer !important;
+        font-size: 16px !important;
+    }
+    .btn-send:hover {
+        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+        color: #1a1a1a !important;
+        border: 1px solid #2ecc71 !important;
+        transform: scale(1.02) !important;
+        box-shadow: 0 5px 20px rgba(46,204,113,0.3) !important;
+    }
+    .btn-send i {
+        margin-right: 8px;
+    }
+
+    .errorlist {
+        color: #ff6b6b;
+        list-style: none;
+        padding: 0;
+        font-size: 0.9rem;
+        margin-top: 5px;
+    }
+    .errorlist li {
+        background: rgba(255,107,107,0.1);
+        padding: 5px 10px;
+        border-radius: 8px;
+        border-left: 3px solid #ff6b6b;
+    }
+    .section-title {
+        color: white;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #2ecc71, #9b59b6);
+        border-radius: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <h1 class="text-center mb-4 section-title">📬 Contact Us</h1>
+    <p class="text-center text-white mb-4">Have questions about our products or orders? Reach out to us!</p>
+    
+    <div class="contact-card">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="errorlist">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn-send">
+                <i class="bi bi-send"></i> Send Message
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

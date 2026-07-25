@@ -1,0 +1,30 @@
+🚚 YOUR ORDER HAS BEEN SHIPPED!
+===========================================
+
+Hello {{ customer_name }},
+
+Great news! Your order #{{ order_id }} is on the way! 📦
+
+Order Details:
+--------------
+Order #: {{ order_id }}
+Delivery: {{ order.get_delivery_status_display }}
+
+Delivery Address:
+----------------
+Location: {{ order.delivery_location }}
+Address: {{ order.delivery_address }}
+
+Expected Delivery: Within 2 business days
+
+Track Your Order: {{ site_url }}/checkout/track/{{ order_id }}/
+
+
+Need help? Reply to this email or WhatsApp us at 254715804141.
+
+Thank you for shopping with Oraimo Tech Hub! 💚
+
+---
+Oraimo Tech Hub
+Online Supplier of Genuine Oraimo Products
+WhatsApp: 254715804141

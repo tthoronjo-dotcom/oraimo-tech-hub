@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Shipped - #{{ order_id }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d2d, #4a1d6d);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #54a0ff;
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            color: rgba(255,255,255,0.7);
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        .content {
+            padding: 30px 25px;
+        }
+        .order-id {
+            background: #e8f4fd;
+            border: 1px solid #54a0ff;
+            border-radius: 8px;
+            padding: 12px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .order-id strong {
+            color: #54a0ff;
+            font-size: 20px;
+        }
+        .delivery-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #54a0ff, #00d2d3);
+            color: #ffffff !important;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #6c757d;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚚 Your Order Has Been Shipped!</h1>
+            <p>Your order is on the way to you</p>
+        </div>
+        
+        <div class="content">
+            <div class="order-id">
+                <strong>#{{ order_id }}</strong>
+                <span style="color: #6c757d; font-size: 14px; display: block; margin-top: 4px;">
+                    Shipped on {{ order.updated_at|date:"M d, Y" }}
+                </span>
+            </div>
+            
+            <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                Hello <strong>{{ customer_name }}</strong>,
+            </p>
+            <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                Great news! Your order <strong>#{{ order_id }}</strong> has been shipped and is on its way to you!
+            </p>
+            
+            <div class="delivery-info">
+                <p><strong>📍 Delivery Address:</strong></p>
+                <p style="color: #555;">{{ order.delivery_location }}</p>
+                <p style="color: #555;">{{ order.delivery_address }}</p>
+                <p style="margin-top: 10px; color: #54a0ff; font-weight: 600;">
+                    🚚 Expected delivery: within 2 business days
+                </p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="{{ site_url }}/checkout/track/{{ order_id }}/" class="btn">
+                    📦 Track Your Order
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p style="font-weight: 600; color: #1a1a2e;">Oraimo Tech Hub</p>
+            <p>📞 <a href="tel:+254715804141" style="color: #54a0ff;">0715 804 141</a></p>
+            <p style="font-size: 11px; color: #999;">&copy; 2025 Oraimo Tech Hub</p>
+        </div>
+    </div>
+</body>
+</html>

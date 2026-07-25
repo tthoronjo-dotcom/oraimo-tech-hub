@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Returns & Warranty - Oraimo Tech Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="policy-card">
+                <h1 class="text-center mb-4 section-title">Returns & Warranty Policy</h1>
+                <p class="text-center text-muted mb-4">Last Updated: July 2026</p>
+
+                <div class="policy-content">
+                    <h4>📦 Returns Policy</h4>
+                    <p><strong>14-Day Return Window:</strong> You have 14 days from the date of delivery to return your product.</p>
+
+                    <h5>Return Conditions:</h5>
+                    <ul>
+                        <li>Product must be in original condition</li>
+                        <li>All original packaging and accessories included</li>
+                        <li>Product must not show signs of wear or damage</li>
+                        <li>Proof of purchase required</li>
+                    </ul>
+
+                    <h5>Non-Returnable Items:</h5>
+                    <ul>
+                        <li>Products damaged due to misuse</li>
+                        <li>Products purchased more than 14 days ago</li>
+                        <li>Items with missing accessories or packaging</li>
+                    </ul>
+
+                    <h4>🔄 Warranty Policy</h4>
+                    <p><strong>12-Month Warranty:</strong> All products come with a 12-month warranty against manufacturing defects.</p>
+
+                    <h5>Warranty Covers:</h5>
+                    <ul>
+                        <li>Manufacturing defects</li>
+                        <li>Faulty components</li>
+                        <li>Issues with product function</li>
+                    </ul>
+
+                    <h5>Warranty Does NOT Cover:</h5>
+                    <ul>
+                        <li>Physical damage (drops, water damage, etc.)</li>
+                        <li>Normal wear and tear</li>
+                        <li>Unauthorized modifications or repairs</li>
+                    </ul>
+
+                    <h4>💰 Refund Process</h4>
+                    <ol>
+                        <li>Contact us to initiate a return</li>
+                        <li>Send the product back to us</li>
+                        <li>We inspect the returned item</li>
+                        <li>Refund processed within 5-7 business days</li>
+                        <li>Refund issued to original payment method</li>
+                    </ol>
+
+                    <h4>📞 Contact for Returns</h4>
+                    <ul>
+                        <li><strong>Email:</strong> info@oraimotechhub.co.ke</li>
+                        <li><strong>Phone:</strong> 0715 804 141</li>
+                        <li><strong>WhatsApp:</strong> 0715 804 141</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .policy-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .policy-content h4 {
+        color: #2ecc71;
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+    .policy-content h5 {
+        color: #9b59b6;
+        margin-top: 15px;
+        margin-bottom: 8px;
+    }
+    .policy-content p, .policy-content li {
+        color: rgba(255,255,255,0.8);
+        line-height: 1.8;
+    }
+    .policy-content ul, .policy-content ol {
+        padding-left: 20px;
+    }
+    .policy-content ul li, .policy-content ol li {
+        margin-bottom: 8px;
+    }
+    .section-title {
+        color: white;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #2ecc71, #9b59b6);
+        border-radius: 2px;
+    }
+    @media (max-width: 768px) {
+        .policy-card { padding: 20px; }
+    }
+</style>
+{% endblock %}

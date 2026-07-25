@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Oraimo Tech Hub</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d2d, #4a1d6d);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #2ecc71;
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px 25px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #ffffff !important;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 Welcome to Oraimo Tech Hub!</h1>
+        </div>
+        <div class="content">
+            <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                Hello <strong>{{ username }}</strong>,
+            </p>
+            <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                Thank you for joining Oraimo Tech Hub! We're excited to have you on board.
+            </p>
+            <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                You now have access to:
+            </p>
+            <ul style="color: #555; line-height: 2;">
+                <li>✅ Track your orders</li>
+                <li>✅ Save your delivery addresses</li>
+                <li>✅ Get exclusive offers</li>
+            </ul>
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="{{ site_url }}" class="btn">🛒 Start Shopping</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p style="font-weight: 600; color: #1a1a2e;">Oraimo Tech Hub</p>
+            <p>💬 <a href="https://wa.me/254715804141" style="color: #2ecc71;">WhatsApp 254715804141</a></p>
+        </div>
+    </div>
+</body>
+</html>

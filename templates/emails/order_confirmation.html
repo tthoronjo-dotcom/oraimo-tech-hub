@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - {{ order_id }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d2d, #4a1d6d);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #2ecc71;
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            color: rgba(255,255,255,0.7);
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        .content {
+            padding: 30px 25px;
+        }
+        .order-id {
+            background: #f0fdf4;
+            border: 1px solid #2ecc71;
+            border-radius: 8px;
+            padding: 12px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .order-id strong {
+            color: #2ecc71;
+            font-size: 20px;
+        }
+        .section-title {
+            color: #1a1a2e;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 20px 0 10px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item-name {
+            color: #333;
+        }
+        .item-price {
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+        .totals {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f0f0;
+        }
+        .totals .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .totals .grand-total {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2ecc71;
+            padding-top: 10px;
+            border-top: 2px solid #2ecc71;
+        }
+        .delivery-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .delivery-info p {
+            margin: 5px 0;
+            color: #555;
+            font-size: 14px;
+        }
+        .delivery-info strong {
+            color: #1a1a2e;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-collected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #6c757d;
+            font-size: 13px;
+        }
+        .footer .social-links a {
+            color: #2ecc71;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #ffffff !important;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        @media (max-width: 480px) {
+            .content { padding: 20px 15px; }
+            .header h1 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>✅ Order Confirmed!</h1>
+            <p>Thank you for shopping with Oraimo Tech Hub</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Order ID -->
+            <div class="order-id">
+                <strong>#{{ order_id }}</strong>
+                <span style="color: #6c757d; font-size: 14px; display: block; margin-top: 4px;">
+                    Order placed on {{ created_at|date:"M d, Y" }} at {{ created_at|time:"H:i" }}
+                </span>
+            </div>
+            
+            <!-- Greeting -->
+            <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                Hello <strong>{{ customer_name }}</strong>,
+            </p>
+            <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                Your order has been placed successfully! We'll notify you once your order ships.
+            </p>
+            
+            <!-- Payment Status -->
+            <div style="margin: 15px 0; text-align: center;">
+                <span class="status-badge status-pending">💰 {{ payment_status|default:"Pay on Delivery" }}</span>
+                <span class="status-badge" style="background: #e2e3e5; color: #383d41; margin-left: 8px;">
+                    🚚 {{ delivery_status|default:"Processing" }}
+                </span>
+            </div>
+            
+            <!-- Items -->
+            <div class="section-title">🛒 Items Ordered</div>
+            {% for item in items %}
+            <div class="item">
+                <span class="item-name">{{ item.product_name }} × {{ item.quantity }}</span>
+                <span class="item-price">KES {{ item.total|floatformat:0 }}</span>
+            </div>
+            {% endfor %}
+            
+            <!-- Totals -->
+            <div class="totals">
+                <div class="row">
+                    <span>Subtotal</span>
+                    <span>KES {{ subtotal|floatformat:0 }}</span>
+                </div>
+                <div class="row">
+                    <span>Delivery Fee</span>
+                    <span>KES {{ delivery_fee|floatformat:0 }}</span>
+                </div>
+                <div class="row grand-total">
+                    <span>Total</span>
+                    <span>KES {{ total|floatformat:0 }}</span>
+                </div>
+            </div>
+            
+            <!-- Delivery Info -->
+            <div class="section-title" style="margin-top: 25px;">📍 Delivery Information</div>
+            <div class="delivery-info">
+                <p><strong>Location:</strong> {{ delivery_location }}</p>
+                <p><strong>Address:</strong> {{ delivery_address }}</p>
+                {% if delivery_notes %}
+                <p><strong>Notes:</strong> {{ delivery_notes }}</p>
+                {% endif %}
+                <p style="margin-top: 10px; color: #2ecc71; font-weight: 600;">
+                    🚚 Expected delivery: within 2 business days
+                </p>
+            </div>
+            
+            <!-- Action Button -->
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="{{ site_url }}/checkout/track/{{ order_id }}/" class="btn">
+                    📦 Track Your Order
+                </a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p style="font-weight: 600; color: #1a1a2e;">Oraimo Tech Hub</p>
+            <p>Online Supplier of Genuine Oraimo Products</p>
+            <p style="font-size: 12px;">
+                📞 <a href="tel:+254715804141" style="color: #2ecc71;">0715 804 141</a> &nbsp;|&nbsp; 
+                📧 <a href="mailto:info@oraimotechhub.co.ke" style="color: #2ecc71;">info@oraimotechhub.co.ke</a>
+            </p>
+            <div class="social-links">
+                <a href="https://wa.me/254715804141">💬 WhatsApp</a>
+                <a href="#">📸 Instagram</a>
+                <a href="#">📘 Facebook</a>
+            </div>
+            <p style="font-size: 11px; color: #999; margin-top: 10px;">
+                &copy; 2025 Oraimo Tech Hub. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

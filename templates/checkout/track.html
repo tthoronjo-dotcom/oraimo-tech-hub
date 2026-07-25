@@ -1,0 +1,297 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Order - Oraimo Tech Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .track-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 30px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .track-container h2 {
+        color: #ffffff;
+    }
+    
+    .track-container .section-title::after {
+        background: linear-gradient(90deg, #feca57, #ff9f43);
+    }
+    
+    .track-input-group {
+        display: flex;
+        gap: 10px;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .track-input-group .form-control {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        padding: 12px 15px;
+        border-radius: 10px;
+        flex: 1;
+    }
+    
+    .track-input-group .form-control:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #feca57;
+        box-shadow: 0 0 20px rgba(254, 202, 87, 0.1);
+        color: #ffffff;
+    }
+    
+    .track-input-group .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-track-order {
+        background: linear-gradient(135deg, #feca57, #ff9f43);
+        border: none;
+        color: #1a1a2e;
+        font-weight: bold;
+        padding: 12px 30px;
+        border-radius: 10px;
+    }
+    
+    .btn-track-order:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(254, 202, 87, 0.3);
+        color: #1a1a2e;
+    }
+    
+    .order-details {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 15px;
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-top: 30px;
+        text-align: left;
+    }
+    
+    .order-details h4 {
+        color: #feca57;
+        margin-bottom: 15px;
+    }
+    
+    .order-details .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .order-details .detail-row:last-child {
+        border-bottom: none;
+    }
+    
+    .order-details .label {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .order-details .value {
+        color: #ffffff;
+    }
+    
+    .order-details .status-badge {
+        padding: 4px 15px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    
+    .status-badge.pending { background: rgba(254, 202, 87, 0.2); color: #feca57; }
+    .status-badge.confirmed { background: rgba(84, 160, 255, 0.2); color: #54a0ff; }
+    .status-badge.picked { background: rgba(255, 159, 67, 0.2); color: #ff9f43; }
+    .status-badge.out_for_delivery { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    .status-badge.delivered { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+    
+    .tracking-bar {
+        margin: 30px 0;
+        padding: 20px;
+        background: rgba(255,255,255,0.03);
+        border-radius: 15px;
+    }
+    
+    .steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+    }
+    
+    .steps::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background: rgba(255,255,255,0.1);
+        z-index: 0;
+    }
+    
+    .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 1;
+    }
+    
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.05);
+        border: 2px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    
+    .step.active .step-number {
+        background: #2ecc71;
+        border-color: #2ecc71;
+        color: #1a1a2e;
+    }
+    
+    .step-label {
+        margin-top: 8px;
+        font-size: 12px;
+        color: rgba(255,255,255,0.5);
+        text-align: center;
+    }
+    
+    .step.active .step-label {
+        color: #fff;
+    }
+    
+    .alert-danger {
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        color: #ff6b6b;
+    }
+    
+    @media (max-width: 768px) {
+        .track-container {
+            padding: 20px 15px;
+        }
+        .track-input-group {
+            flex-direction: column;
+        }
+        .track-input-group .btn {
+            width: 100%;
+        }
+        .steps {
+            flex-wrap: wrap;
+        }
+        .step {
+            width: 50%;
+            margin-bottom: 15px;
+        }
+        .steps::before {
+            display: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="track-container">
+    <h2 class="text-center mb-4 section-title">📦 Track Your Order</h2>
+    
+    <form method="GET" class="track-input-group">
+        <input type="text" name="order_id" class="form-control" placeholder="Enter Order ID (e.g., OR-ABC12345)" required>
+        <button type="submit" class="btn btn-track-order">Track →</button>
+    </form>
+    
+    {% if order %}
+    <!-- Tracking Status Bar -->
+    <div class="tracking-bar">
+        <div class="steps">
+            <div class="step {% if order.delivery_status == 'pending' or order.delivery_status == 'confirmed' %}active{% endif %}">
+                <span class="step-number">1</span>
+                <span class="step-label">Order Placed</span>
+            </div>
+            <div class="step {% if order.delivery_status == 'picked' %}active{% endif %}">
+                <span class="step-number">2</span>
+                <span class="step-label">Picked</span>
+            </div>
+            <div class="step {% if order.delivery_status == 'out_for_delivery' %}active{% endif %}">
+                <span class="step-number">3</span>
+                <span class="step-label">Out for Delivery</span>
+            </div>
+            <div class="step {% if order.delivery_status == 'delivered' %}active{% endif %}">
+                <span class="step-number">4</span>
+                <span class="step-label">Delivered</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="order-details">
+        <h4>Order: {{ order.order_id }}</h4>
+        
+        <div class="detail-row">
+            <span class="label">Status</span>
+            <span class="value">
+                {% if order.delivery_status == 'pending' %}
+                    <span class="status-badge pending">⏳ Order Placed</span>
+                {% elif order.delivery_status == 'confirmed' %}
+                    <span class="status-badge confirmed">✅ Confirmed</span>
+                {% elif order.delivery_status == 'picked' %}
+                    <span class="status-badge picked">🚚 Picked by Rider</span>
+                {% elif order.delivery_status == 'out_for_delivery' %}
+                    <span class="status-badge out_for_delivery">🚚 Out for Delivery</span>
+                {% elif order.delivery_status == 'delivered' %}
+                    <span class="status-badge delivered">🎉 Delivered</span>
+                {% else %}
+                    📝 {{ order.delivery_status }}
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="label">Total</span>
+            <span class="value">KES {{ order.total_amount }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="label">Delivery Location</span>
+            <span class="value">{{ order.delivery_location }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="label">Delivery Address</span>
+            <span class="value">{{ order.delivery_address }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="label">Order Date</span>
+            <span class="value">{{ order.created_at|date:"F j, Y" }}</span>
+        </div>
+        
+        <div class="detail-row">
+            <span class="label">Payment Status</span>
+            <span class="value">
+                {% if order.payment_status == 'fully_paid' %}
+                ✅ Fully Paid
+                {% elif order.payment_status == 'pending' %}
+                ⏳ Pending
+                {% elif order.payment_status == 'cancelled' %}
+                ❌ Cancelled
+                {% else %}
+                {{ order.payment_status }}
+                {% endif %}
+            </span>
+        </div>
+    </div>
+    {% elif request.GET.order_id %}
+    <div class="alert alert-danger text-center mt-4">
+        <i class="bi bi-exclamation-triangle"></i> Order not found. Please check your Order ID.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

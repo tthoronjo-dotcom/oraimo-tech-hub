@@ -1,0 +1,5 @@
+[PAYMENT] 2026-07-07 09:13:37,460 ERROR - MPESA_CONSUMER_KEY or MPESA_CONSUMER_SECRET not set
+[PAYMENT] 2026-07-07 09:14:01,170 ERROR - PESAPAL_CONSUMER_KEY or PESAPAL_CONSUMER_SECRET not set
+[PAYMENT] 2026-07-07 09:16:01,965 ERROR - MPESA_CONSUMER_KEY or MPESA_CONSUMER_SECRET not set
+[PAYMENT] 2026-07-07 09:19:31,240 ERROR - MPESA_CONSUMER_KEY or MPESA_CONSUMER_SECRET not set
+[PAYMENT] 2026-07-07 19:07:07,974 ERROR - Error getting Pesapal access token: HTTPSConnectionPool(host='cybqa.pesapal.com', port=443): Max retries exceeded with url: /pesapalv3/api/Auth/RequestToken (Caused by NameResolutionError("HTTPSConnection(host='cybqa.pesapal.com', port=443): Failed to resolve 'cybqa.pesapal.com' ([Errno 11001] getaddrinfo failed)"))

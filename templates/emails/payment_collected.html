@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Collected - #{{ order_id }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d2d, #4a1d6d);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            color: #2ecc71;
+            margin: 0;
+            font-size: 24px;
+        }
+        .content {
+            padding: 30px 25px;
+        }
+        .amount-box {
+            background: #f0fdf4;
+            border: 2px solid #2ecc71;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .amount-box .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: #ffffff !important;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Payment Collected!</h1>
+            <p>Thank you for your payment</p>
+        </div>
+        
+        <div class="content">
+            <p style="font-size: 15px; color: #333; line-height: 1.6;">
+                Hello <strong>{{ customer_name }}</strong>,
+            </p>
+            <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                We are happy to confirm that your payment for Order <strong>#{{ order_id }}</strong> has been collected.
+            </p>
+            
+            <div class="amount-box">
+                <div style="color: #6c757d; font-size: 14px;">Amount Collected</div>
+                <div class="amount">KES {{ total|floatformat:0 }}</div>
+                <div style="color: #6c757d; font-size: 12px; margin-top: 5px;">
+                    Collected on {{ collected_at|date:"M d, Y H:i" }}
+                </div>
+            </div>
+            
+            <p style="font-size: 15px; color: #555; line-height: 1.6;">
+                Thank you for shopping with us! We hope you enjoy your new Oraimo products.
+            </p>
+            
+            <div style="text-align: center; margin-top: 25px;">
+                <a href="{{ site_url }}/checkout/track/{{ order_id }}/" class="btn">
+                    📦 Track Your Order
+                </a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p style="font-weight: 600; color: #1a1a2e;">Oraimo Tech Hub</p>
+            <p>💬 <a href="https://wa.me/254715804141" style="color: #2ecc71;">WhatsApp 254715804141</a></p>
+        </div>
+    </div>
+</body>
+</html>

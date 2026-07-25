@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Oraimo Tech Hub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="auth-card">
+                <h2 class="text-center mb-4 section-title">Welcome Back</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="text-danger small">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <p class="text-center mt-3" style="color: rgba(255,255,255,0.6);">
+                    Don't have an account? <a href="{% url 'accounts:register' %}">Register</a>
+                </p>
+                <p class="text-center" style="color: rgba(255,255,255,0.4); font-size: 14px;">
+                    <a href="{% url 'accounts:password_reset' %}">Forgot password?</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-card {
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
+    .auth-card input {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 10px 15px;
+        color: #fff;
+        width: 100%;
+    }
+    .auth-card input:focus {
+        border-color: #2ecc71;
+        outline: none;
+    }
+</style>
+{% endblock %}

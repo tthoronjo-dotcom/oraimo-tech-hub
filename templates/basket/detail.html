@@ -1,0 +1,631 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Cart - Oraimo Tech Hub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .basket-container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .basket-container h1 {
+        color: #ffffff;
+    }
+    
+    .basket-container .section-title::after {
+        background: linear-gradient(90deg, #ff9f43, #ff6b6b);
+    }
+    
+    .basket-table thead th {
+        color: #ff9f43;
+        border-bottom: 2px solid rgba(255, 159, 67, 0.3);
+        padding: 12px 8px;
+        font-weight: 600;
+    }
+    
+    .basket-table tbody td {
+        color: #ffffff;
+        vertical-align: middle;
+        padding: 12px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .basket-table tbody tr {
+        transition: background 0.3s;
+    }
+    
+    .basket-table tbody tr:hover {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    
+    .product-name {
+        color: #54a0ff !important;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+    
+    .product-name:hover {
+        color: #ff9f43 !important;
+    }
+    
+    .item-price {
+        color: #2ecc71 !important;
+        font-weight: 700;
+        font-size: 16px;
+    }
+    
+    .item-total {
+        color: #ff9f43 !important;
+        font-weight: 700;
+        font-size: 16px;
+    }
+    
+    /* ===== PRODUCT IMAGE - FIXED SIZE ===== */
+    .product-thumb {
+        width: 55px;
+        height: 55px;
+        flex-shrink: 0;
+        background: rgba(255,255,255,0.03);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        margin-right: 12px;
+    }
+    
+    .product-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        padding: 5px;
+    }
+    
+    .product-cell {
+        display: flex;
+        align-items: center;
+    }
+    
+    /* ===== QUANTITY CONTROLS ===== */
+    .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        justify-content: flex-start;
+    }
+    
+    .quantity-control .qty-btn {
+        background: transparent !important;
+        border: none !important;
+        color: rgba(255, 255, 255, 0.5);
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: 300;
+        padding: 0;
+    }
+    
+    .quantity-control .qty-btn.minus {
+        color: rgba(255, 107, 107, 0.6);
+    }
+    
+    .quantity-control .qty-btn.minus:hover {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1) !important;
+        transform: scale(1.1);
+    }
+    
+    .quantity-control .qty-btn.plus {
+        color: rgba(46, 204, 113, 0.6);
+    }
+    
+    .quantity-control .qty-btn.plus:hover {
+        color: #2ecc71;
+        background: rgba(46, 204, 113, 0.1) !important;
+        transform: scale(1.1);
+    }
+    
+    .quantity-control .qty-btn:active {
+        transform: scale(0.95);
+    }
+    
+    /* ===== QUANTITY NUMBER - BLACK & HIGHLY VISIBLE ===== */
+    .quantity-control .qty-number {
+        color: #000000 !important;
+        font-weight: 700;
+        font-size: 16px;
+        min-width: 30px;
+        text-align: center;
+        padding: 4px 8px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .quantity-control .qty-number.loading {
+        opacity: 0.4;
+        animation: pulse 0.5s ease-in-out infinite alternate;
+    }
+    
+    @keyframes pulse {
+        from { opacity: 0.4; }
+        to { opacity: 0.8; }
+    }
+    
+    /* ===== REMOVE BUTTON ===== */
+    .btn-remove {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        color: rgba(255, 255, 255, 0.6) !important;
+        transition: all 0.3s !important;
+        border-radius: 6px !important;
+        padding: 4px 10px !important;
+        font-weight: 500 !important;
+        font-size: 12px !important;
+    }
+    
+    .btn-remove:hover {
+        background: rgba(255, 107, 107, 0.15) !important;
+        border-color: rgba(255, 107, 107, 0.3) !important;
+        color: #ff6b6b !important;
+    }
+    
+    .btn-remove i {
+        color: inherit !important;
+        margin-right: 4px;
+        font-size: 12px;
+    }
+    
+    .btn-continue {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+        transition: all 0.3s;
+        padding: 12px 25px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .btn-continue:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #54a0ff;
+        border-color: #54a0ff;
+        text-decoration: none;
+    }
+    
+    .btn-checkout {
+        background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+        border: none;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 12px 30px;
+        border-radius: 10px;
+        transition: all 0.3s;
+        text-decoration: none;
+        box-shadow: 0 2px 15px rgba(255, 159, 67, 0.2);
+    }
+    
+    .btn-checkout:hover {
+        transform: scale(1.02);
+        box-shadow: 0 5px 25px rgba(255, 159, 67, 0.4);
+        color: #ffffff;
+        text-decoration: none;
+    }
+    
+    .basket-total {
+        background: linear-gradient(135deg, rgba(255, 159, 67, 0.15), rgba(255, 107, 107, 0.08)) !important;
+        border-radius: 12px;
+        border-left: 4px solid #ff9f43;
+    }
+    
+    .basket-total .total-label {
+        color: #ff9f43;
+        font-size: 18px;
+        font-weight: 700;
+    }
+    
+    .basket-total .total-amount {
+        color: #ffffff;
+        font-size: 24px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .empty-basket {
+        padding: 60px 20px;
+        text-align: center;
+    }
+    
+    .empty-basket .icon {
+        font-size: 80px;
+        color: rgba(255, 159, 67, 0.2);
+    }
+    
+    .empty-basket h3 {
+        color: #ffffff;
+        margin-top: 20px;
+    }
+    
+    .empty-basket p {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+    
+    .toast {
+        background: rgba(30, 30, 30, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px 18px;
+        min-width: 200px;
+        color: #fff;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        animation: slideInRight 0.3s ease forwards;
+        margin-bottom: 10px;
+        border-left: 4px solid #2ecc71;
+    }
+    
+    .toast-error {
+        border-left: 4px solid #ff6b6b;
+    }
+    
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .basket-container {
+            padding: 15px;
+        }
+        .basket-table thead th {
+            font-size: 11px;
+        }
+        .basket-table tbody td {
+            font-size: 13px;
+            padding: 10px 5px;
+        }
+        .basket-total .total-amount {
+            font-size: 18px;
+        }
+        .basket-total .total-label {
+            font-size: 15px;
+        }
+        .btn-continue, .btn-checkout {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .btn-remove {
+            padding: 3px 8px !important;
+            font-size: 11px !important;
+        }
+        .quantity-control .qty-btn {
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+        }
+        .quantity-control .qty-number {
+            font-size: 14px;
+            min-width: 24px;
+            padding: 3px 6px;
+        }
+        .item-price, .item-total {
+            font-size: 14px;
+        }
+        .product-thumb {
+            width: 40px;
+            height: 40px;
+            margin-right: 8px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .basket-table thead th {
+            font-size: 10px;
+            padding: 6px 4px;
+        }
+        .basket-table tbody td {
+            font-size: 11px;
+            padding: 8px 4px;
+        }
+        .product-name {
+            font-size: 12px;
+        }
+        .quantity-control .qty-btn {
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+        }
+        .quantity-control .qty-number {
+            font-size: 12px;
+            min-width: 20px;
+            padding: 2px 4px;
+        }
+        .btn-remove {
+            font-size: 10px !important;
+            padding: 2px 6px !important;
+        }
+        .btn-remove i {
+            font-size: 10px;
+        }
+        .product-thumb {
+            width: 32px;
+            height: 32px;
+            margin-right: 6px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="basket-container">
+    <h1 class="mb-4 section-title">Your Cart 🛒</h1>
+
+    {% if basket|length == 0 %}
+    <div class="empty-basket">
+        <div class="icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <p>Looks like you haven't added any products yet.</p>
+        <a href="{% url 'product_list' %}" class="btn btn-primary mt-3">Start Shopping →</a>
+    </div>
+    {% else %}
+    <div class="table-responsive">
+        <table class="table basket-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in basket %}
+                <tr id="cart-item-{{ item.variant_id }}">
+                    <td>
+                        <div class="product-cell">
+                            <div class="product-thumb">
+                                {% if item.image %}
+                                <img src="{{ item.image }}" alt="{{ item.name }}">
+                                {% else %}
+                                <span style="color: rgba(255,255,255,0.2); font-size: 12px;">No image</span>
+                                {% endif %}
+                            </div>
+                            <span class="product-name">{{ item.name|truncatechars:30 }}</span>
+                        </div>
+                    </td>
+                    <td class="item-price">KES {{ item.price|floatformat:0 }}</td>
+                    <td>
+                        <div class="quantity-control">
+                            <button class="qty-btn minus" onclick="updateQuantity('{{ item.variant_id }}', -1)">
+                                <i class="bi bi-dash"></i>
+                            </button>
+                            <span class="qty-number" id="qty-{{ item.variant_id }}">{{ item.quantity }}</span>
+                            <button class="qty-btn plus" onclick="updateQuantity('{{ item.variant_id }}', 1)">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                        </div>
+                    </td>
+                    <td class="item-total" id="total-{{ item.variant_id }}">KES {% widthratio item.price 1 item.quantity %}</td>
+                    <td>
+                        <form method="POST" action="{% url 'basket:basket_remove' item.variant_id %}" class="remove-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-remove btn-sm">
+                                <i class="bi bi-trash"></i> Remove
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="basket-total">
+                    <td colspan="3" class="text-end total-label">Total:</td>
+                    <td colspan="2" class="total-amount" id="cart-total">KES {{ basket.get_total_price|floatformat:0 }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    
+    <div class="d-flex justify-content-between flex-wrap mt-4">
+        <a href="{% url 'product_list' %}" class="btn btn-continue">
+            <i class="bi bi-arrow-left"></i> Continue Shopping
+        </a>
+        <a href="{% url 'checkout:checkout_page' %}" class="btn btn-checkout">
+            Proceed to Checkout <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showToast(message, type) {
+    var container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+    
+    var toast = document.createElement('div');
+    toast.className = 'toast' + (type === 'error' ? ' toast-error' : '');
+    toast.innerHTML = message;
+    container.appendChild(toast);
+    
+    setTimeout(function() {
+        toast.remove();
+    }, 3000);
+}
+
+// ===== UPDATE QUANTITY FUNCTION =====
+function updateQuantity(variantId, change) {
+    var qtySpan = document.getElementById('qty-' + variantId);
+    if (!qtySpan) {
+        showToast('❌ Error: Item not found', 'error');
+        return;
+    }
+    
+    // Get current quantity from the DOM
+    var currentQty = parseInt(qtySpan.innerText);
+    var newQty = currentQty + change;
+    
+    // Validate - don't go below 1
+    if (newQty < 1) {
+        showToast('❌ Quantity cannot be less than 1', 'error');
+        return;
+    }
+    
+    // Show loading state
+    qtySpan.classList.add('loading');
+    
+    // Send request to server
+    fetch('/basket/update/' + variantId + '/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ quantity: newQty })
+    })
+    .then(function(response) {
+        if (!response.ok) {
+            throw new Error('Server error: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(function(data) {
+        if (data.success) {
+            // ===== UPDATE QUANTITY NUMBER =====
+            qtySpan.innerText = newQty;
+            qtySpan.classList.remove('loading');
+            
+            // Update the item total
+            var row = document.getElementById('cart-item-' + variantId);
+            var priceText = '';
+            if (row) {
+                var cells = row.querySelectorAll('td');
+                if (cells.length >= 2) {
+                    priceText = cells[1].innerText.replace('KES ', '').replace(/,/g, '');
+                }
+            }
+            
+            var pricePerItem = parseFloat(priceText) || 0;
+            var newTotal = pricePerItem * newQty;
+            var totalCell = document.getElementById('total-' + variantId);
+            
+            if (totalCell) {
+                totalCell.innerText = 'KES ' + newTotal.toLocaleString();
+            }
+            
+            // Update cart total
+            updateCartTotal();
+            
+            // Update floating cart badge
+            if (typeof updateFloatingCartBadge === 'function') {
+                updateFloatingCartBadge(data.total_items);
+            }
+            
+            // Update navbar cart badge
+            var basketCount = document.getElementById('basket-count');
+            if (basketCount && data.total_items !== undefined) {
+                basketCount.innerText = data.total_items;
+            }
+            
+            showToast('✅ Quantity updated to ' + newQty, 'success');
+            
+        } else {
+            qtySpan.classList.remove('loading');
+            showToast('❌ Failed to update quantity', 'error');
+        }
+    })
+    .catch(function(error) {
+        console.error('Error:', error);
+        qtySpan.classList.remove('loading');
+        showToast('❌ ' + error.message, 'error');
+    });
+}
+
+// ===== UPDATE CART TOTAL =====
+function updateCartTotal() {
+    var total = 0;
+    var totals = document.querySelectorAll('.item-total');
+    totals.forEach(function(el) {
+        var priceText = el.innerText.replace('KES ', '').replace(/,/g, '');
+        var price = parseFloat(priceText);
+        if (!isNaN(price)) {
+            total += price;
+        }
+    });
+    var cartTotal = document.getElementById('cart-total');
+    if (cartTotal) {
+        cartTotal.innerHTML = 'KES ' + total.toLocaleString();
+    }
+}
+
+// ===== DOM READY =====
+document.addEventListener('DOMContentLoaded', function() {
+    // ===== REMOVE FORM HANDLING =====
+    var removeForms = document.querySelectorAll('.remove-form');
+    removeForms.forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            // Confirm before removing
+            if (!confirm('Remove this item from your cart?')) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Show loading state on the button
+            var btn = this.querySelector('.btn-remove');
+            if (btn) {
+                btn.innerHTML = '<i class="bi bi-hourglass"></i> Removing...';
+                btn.disabled = true;
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

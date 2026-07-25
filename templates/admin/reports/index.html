@@ -1,0 +1,13 @@
+{% extends "admin/index.html" %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="reports-module">
+        <h2>📊 Reports</h2>
+        <ul>
+            <li><a href="/adteddymin/reports/">View Dashboard</a></li>
+        </ul>
+    </div>
+    {{ block.super }}
+</div>
+{% endblock %}

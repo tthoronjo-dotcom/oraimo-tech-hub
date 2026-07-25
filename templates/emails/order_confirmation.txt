@@ -1,0 +1,49 @@
+✅ ORDER CONFIRMATION - #{{ order_id }}
+===========================================
+
+Hello {{ customer_name }},
+
+Thank you for your order! 🎉
+
+Order Details:
+--------------
+Order #: {{ order_id }}
+Date: {{ created_at|date:"M d, Y" }}
+Payment: {{ payment_status|default:"Pay on Delivery" }}
+Delivery: {{ delivery_status|default:"Processing" }}
+
+Items Ordered:
+--------------
+{% for item in items %}{{ item.product_name }} × {{ item.quantity }} = KES {{ item.total|floatformat:0 }}
+{% endfor %}
+-------------------------------------------
+Subtotal: KES {{ subtotal|floatformat:0 }}
+Delivery Fee: KES {{ delivery_fee|floatformat:0 }}
+TOTAL: KES {{ total|floatformat:0 }}
+-------------------------------------------
+
+Delivery Address:
+----------------
+Location: {{ delivery_location }}
+Address: {{ delivery_address }}
+{% if delivery_notes %}Notes: {{ delivery_notes }}{% endif %}
+
+What's Next?
+------------
+1️⃣ We'll process your order within 24 hours
+2️⃣ You'll receive a shipping confirmation
+3️⃣ Pay on delivery when your order arrives
+
+Track Your Order: {{ site_url }}/checkout/track/{{ order_id }}/
+
+
+Questions? Reply to this email or WhatsApp us at 254715804141.
+
+Thank you for shopping with Oraimo Tech Hub! 💚
+
+---
+Oraimo Tech Hub
+Online Supplier of Genuine Oraimo Products
+WhatsApp: 254715804141
+Email: info@oraimotechhub.co.ke
+Website: {{ site_url }}
