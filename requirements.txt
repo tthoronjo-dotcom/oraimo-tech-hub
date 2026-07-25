@@ -15,3 +15,4 @@ crispy-bootstrap5==0.7
 django-imagekit==5.0.0
 django-filter==24.3
 django-recaptcha==4.0.0
+openpyxl==3.1.5
