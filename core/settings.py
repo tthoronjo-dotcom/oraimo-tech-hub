@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'imagekit',
-    'dbbackup',
     'corsheaders',
     'crispy_forms',
     'crispy_bootstrap5',
@@ -179,10 +178,6 @@ CSP_FONT_SRC = ("'self'", "https://cdn.jsdelivr.net")
 CSP_CONNECT_SRC = ("'self'",)
 CSP_FRAME_SRC = ("'self'",)
 
-# ===== BACKUP CONFIGURATION =====
-DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
-DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'backups'}
-DBBACKUP_CLEANUP_KEEP = 7
 
 # ===== CACHE (File-based) =====
 CACHES = {
