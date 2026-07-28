@@ -9,6 +9,29 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
+
+# ===== CLOUDINARY CONFIGURATION =====
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+from decouple import config
+
+# Cloudinary Configuration
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+)
+
+# ===== STORAGE =====
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# ===== MEDIA URL =====
+# Optional: You can set this or keep it as before
+MEDIA_URL = f'https://res.cloudinary.com/{config("CLOUDINARY_CLOUD_NAME")}/image/upload/'
+
+# Important: Keep STATIC files local
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # ===== ALLOWED HOSTS =====
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
