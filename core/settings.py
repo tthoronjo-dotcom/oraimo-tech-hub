@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -9,38 +12,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-
-# ===== CLOUDINARY CONFIGURATION =====
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-from decouple import config
-
-# Cloudinary Configuration
-cloudinary.config(
-    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
-    api_key=config('CLOUDINARY_API_KEY'),
-    api_secret=config('CLOUDINARY_API_SECRET'),
-)
-
-# ===== STORAGE =====
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# ===== MEDIA URL =====
-# Optional: You can set this or keep it as before
-MEDIA_URL = f'https://res.cloudinary.com/{config("CLOUDINARY_CLOUD_NAME")}/image/upload/'
-
-# Important: Keep STATIC files local
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # ===== ALLOWED HOSTS =====
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
 
-# Render provides this automatically
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# CSRF Trusted Origins
 CSRF_TRUSTED_ORIGINS = [f'https://{RENDER_EXTERNAL_HOSTNAME}'] if RENDER_EXTERNAL_HOSTNAME else []
 CSRF_TRUSTED_ORIGINS += [
     'https://oraimotechhub.co.ke',
@@ -108,7 +86,7 @@ TEMPLATES = [
     },
 ]
 
-# ===== DATABASE - Uses DATABASE_URL from Render =====
+# ===== DATABASE =====
 DATABASES = {
     'default': dj_database_url.config(
         default=config('DATABASE_URL', default=''),
@@ -131,7 +109,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# ===== AUTHENTICATION REDIRECTS =====
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
@@ -187,7 +164,7 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
-# ===== CONTENT SECURITY POLICY =====
+# ===== CSP =====
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://code.jquery.com")
 CSP_STYLE_SRC = ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net")
@@ -207,14 +184,23 @@ CACHES = {
     }
 }
 
-# ===== IMAGEKIT CONFIGURATION =====
+# ===== IMAGEKIT =====
 IMAGEKIT_CACHEFILE_DIR = 'CACHE/images'
 IMAGEKIT_CACHE_BACKEND = 'default'
 IMAGEKIT_USE_MEMCACHED_SAFE_CACHE_KEY = False
 IMAGEKIT_CACHE_TIMEOUT = 300
 IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = 'imagekit.cachefiles.backends.Simple'
 
-# ===== DELIVERY CONFIGURATION =====
+# ===== CLOUDINARY =====
+cloudinary.config(
+    cloud_name=config('CLOUDINARY_CLOUD_NAME'),
+    api_key=config('CLOUDINARY_API_KEY'),
+    api_secret=config('CLOUDINARY_API_SECRET'),
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# ===== DELIVERY =====
 DELIVERY_FEES = {
     'Nairobi CBD': 0,
     'Nairobi (Within City)': 250,
@@ -231,19 +217,19 @@ FREE_OVER_THRESHOLD_LOCATIONS = [
     'Nairobi Outskirts',
 ]
 
-# ===== EMAIL CONFIGURATION =====
+# ===== EMAIL - GMAIL (FIXED) =====
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='techbyoraimo@gmail.com')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='')
-ADMIN_EMAIL = config('ADMIN_EMAIL', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='techbyoraimo@gmail.com')
+ADMIN_EMAIL = config('ADMIN_EMAIL', default='techbyoraimo@gmail.com')
 
 SITE_URL = config('SITE_URL', default='https://oraimo-tech-hub.onrender.com')
 
-# ===== PESAPAL CONFIGURATION =====
+# ===== PESAPAL =====
 PESAPAL_TIMEOUT = 30
 PESAPAL_ENABLED = config('PESAPAL_ENABLED', default=False, cast=bool)
 
@@ -299,11 +285,12 @@ LOGGING = {
         },
     },
 }
+
 # ===== RECAPTCHA =====
 RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY', default='')
 RECAPTCHA_PRIVATE_KEY = config('RECAPTCHA_PRIVATE_KEY', default='')
 
-# ===== CUSTOM ERROR HANDLERS =====
+# ===== ERROR HANDLERS =====
 handler404 = 'core.views.custom_404'
 handler403 = 'core.views.custom_403'
 handler500 = 'core.views.custom_500'
