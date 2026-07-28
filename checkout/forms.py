@@ -105,3 +105,9 @@ class CheckoutForm(forms.ModelForm):
             })
         
         return cleaned_data
+# In checkout/forms.py
+from django_recaptcha.fields import ReCaptchaField
+from django_recaptcha.widgets import ReCaptchaV2Checkbox
+
+class CheckoutForm(forms.ModelForm):
+    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox)

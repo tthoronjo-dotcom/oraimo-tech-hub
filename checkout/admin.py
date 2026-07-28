@@ -4,6 +4,7 @@ from django.utils import timezone
 from .models import Order, OrderItem
 from core.emails import send_order_confirmation_email
 
+
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
@@ -16,17 +17,19 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        'order_id', 
-        'customer_name', 
-        'customer_phone', 
-        'total_amount', 
-        'payment_status_display', 
+        'order_id',
+        'customer_name',
+        'customer_phone',
+        'total_amount',
+        'coupon_code_display',
+        'coupon_discount_display',
+        'payment_status_display',
         'delivery_status_display',
         'created_at'
     )
     
     list_filter = ('payment_status', 'delivery_status', 'is_cbd', 'created_at')
-    search_fields = ('order_id', 'customer_name', 'customer_phone', 'customer_email')
+    search_fields = ('order_id', 'customer_name', 'customer_phone', 'customer_email', 'coupon_code_used')
     inlines = [OrderItemInline]
     readonly_fields = ('order_id', 'created_at', 'updated_at', 'subtotal', 'total_amount')
     
@@ -40,6 +43,9 @@ class OrderAdmin(admin.ModelAdmin):
         ('Payment on Delivery', {
             'fields': ('payment_status', 'cod_collected_at', 'cod_collected_by')
         }),
+        ('Coupon Information', {
+            'fields': ('coupon', 'coupon_code_used', 'coupon_discount')
+        }),
         ('Financial Details', {
             'fields': ('subtotal', 'delivery_fee', 'total_amount', 'amount_paid', 'remaining_balance')
         }),
@@ -50,6 +56,18 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('created_at', 'updated_at')
         }),
     )
+    
+    def coupon_code_display(self, obj):
+        if obj.coupon_code_used:
+            return format_html(f'<span class="badge bg-primary">{obj.coupon_code_used}</span>')
+        return "-"
+    coupon_code_display.short_description = 'Coupon Code'
+    
+    def coupon_discount_display(self, obj):
+        if obj.coupon_discount > 0:
+            return format_html(f'<span style="color: #2ecc71;">- KES {obj.coupon_discount:,.2f}</span>')
+        return "-"
+    coupon_discount_display.short_description = 'Discount'
     
     def payment_status_display(self, obj):
         """Display payment status with colored badges"""
@@ -87,9 +105,9 @@ class OrderAdmin(admin.ModelAdmin):
     delivery_status_display.short_description = 'Delivery Status'
     
     actions = [
-        'mark_as_confirmed', 
-        'mark_as_picked', 
-        'mark_as_out_for_delivery', 
+        'mark_as_confirmed',
+        'mark_as_picked',
+        'mark_as_out_for_delivery',
         'mark_as_delivered',
         'mark_payment_as_collected',
         'mark_payment_as_failed'
@@ -97,9 +115,6 @@ class OrderAdmin(admin.ModelAdmin):
     
     def mark_as_confirmed(self, request, queryset):
         queryset.update(delivery_status='confirmed')
-        for order in queryset:
-            if order.customer_email:
-                send_order_confirmation_email(order)
         self.message_user(request, f"✅ {queryset.count()} orders marked as confirmed.")
     mark_as_confirmed.short_description = "✅ Mark as Confirmed"
     
@@ -138,4 +153,4 @@ class OrderAdmin(admin.ModelAdmin):
     mark_payment_as_failed.short_description = "❌ Mark Payment as Failed"
     
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related('cod_collected_by')
+        return super().get_queryset(request).select_related('coupon', 'cod_collected_by')

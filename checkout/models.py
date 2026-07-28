@@ -1,8 +1,9 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from shop.models import ProductVariant
-from django.utils import timezone  # Add this import
+from shop.models import ProductVariant, Coupon
+from django.utils import timezone
+
 class Order(models.Model):
     # Keep existing payment status but simplify for COD
     PAYMENT_STATUS = [
@@ -61,6 +62,27 @@ class Order(models.Model):
     delivery_notes = models.TextField(
         blank=True,
         help_text="Special instructions for delivery team"
+    )
+    
+    # ===== COUPON FIELDS =====
+    coupon = models.ForeignKey(
+        Coupon,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='orders',
+        help_text="Coupon applied to this order"
+    )
+    coupon_discount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text="Discount amount applied from coupon"
+    )
+    coupon_code_used = models.CharField(
+        max_length=9,
+        blank=True,
+        help_text="The coupon code that was applied"
     )
     
     # Keep existing payment fields but make them optional/blank
@@ -130,6 +152,59 @@ class Order(models.Model):
         """Mark order payment as failed"""
         self.payment_status = 'failed'
         self.save()
+    
+    # ===== COUPON METHODS =====
+    def apply_coupon(self, coupon_code, basket_total):
+        """
+        Apply a coupon to this order
+        """
+        from shop.models import Coupon, UsedCoupon
+        
+        try:
+            coupon = Coupon.objects.get(code=coupon_code.upper(), is_active=True)
+            
+            # Check if valid
+            is_valid, message = coupon.is_valid(basket_total)
+            if not is_valid:
+                return False, message
+            
+            # Check if coupon already used on this order
+            if UsedCoupon.objects.filter(coupon=coupon, order=self).exists():
+                return False, "This coupon has already been applied to this order."
+            
+            # Calculate discount
+            discount = coupon.calculate_discount(self.subtotal)
+            
+            # Apply discount
+            self.coupon = coupon
+            self.coupon_discount = discount
+            self.coupon_code_used = coupon.code
+            self.total_amount = self.subtotal + self.delivery_fee - discount
+            self.save()
+            
+            return True, f"Coupon applied! You saved KES {discount:,.2f}"
+            
+        except Coupon.DoesNotExist:
+            return False, "Invalid coupon code. Please check and try again."
+    
+    def get_coupon_discount_display(self):
+        """
+        Get the coupon discount as a percentage with label
+        """
+        if self.coupon:
+            return f"{self.coupon.discount_percent}% off"
+        return "No coupon applied"
+    
+    @property
+    def has_coupon(self):
+        """Check if order has a coupon applied"""
+        return self.coupon is not None
+    
+    @property
+    def formatted_discount(self):
+        """Get the discount amount formatted"""
+        return f"KES {self.coupon_discount:,.2f}"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')

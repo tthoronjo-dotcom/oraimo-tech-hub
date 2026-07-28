@@ -109,6 +109,84 @@
         font-size: 13px;
     }
     
+    /* ===== COUPON STYLES ===== */
+    .coupon-section {
+        background: rgba(255, 215, 0, 0.05);
+        border: 1px solid rgba(255, 215, 0, 0.15);
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin: 15px 0;
+    }
+    
+    .coupon-section .input-group {
+        max-width: 100%;
+    }
+    
+    .coupon-section .form-control {
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 600;
+    }
+    
+    .coupon-section .btn-apply {
+        background: linear-gradient(135deg, #ffd700, #f0a500);
+        color: #1a1a2e;
+        font-weight: 700;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .coupon-section .btn-apply:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+    
+    .coupon-section .btn-remove {
+        background: rgba(255, 107, 107, 0.15);
+        color: #ff6b6b;
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        padding: 10px 25px;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .coupon-section .btn-remove:hover {
+        background: rgba(255, 107, 107, 0.3);
+    }
+    
+    .coupon-applied {
+        background: rgba(46, 204, 113, 0.1);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        border-radius: 8px;
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .coupon-applied .coupon-code {
+        font-weight: 700;
+        color: #2ecc71;
+        letter-spacing: 2px;
+        font-size: 16px;
+    }
+    
+    .coupon-applied .coupon-discount {
+        color: #2ecc71;
+        font-weight: 600;
+    }
+    
+    /* ===== COUPON MESSAGE ===== */
+    #couponMessage .alert {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 14px;
+    }
+    
+    /* ===== ORDER SUMMARY ===== */
     .order-summary {
         background: rgba(255, 255, 255, 0.03);
         border-radius: 15px;
@@ -131,6 +209,14 @@
     
     .order-summary .value {
         color: #ffffff;
+    }
+    
+    .order-summary .discount-item {
+        color: #2ecc71;
+    }
+    
+    .order-summary .discount-item .value {
+        color: #2ecc71;
     }
     
     .order-summary .total-label {
@@ -321,6 +407,14 @@
         .delivery-locations-table td {
             padding: 4px 8px;
         }
+        .coupon-section .input-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .coupon-section .btn-apply,
+        .coupon-section .btn-remove {
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
@@ -363,7 +457,7 @@
                     {% endif %}
                 </div>
                 
-                <!-- ===== DELIVERY LOCATION DROPDOWN - FIXED ===== -->
+                <!-- ===== DELIVERY LOCATION DROPDOWN ===== -->
                 <div class="mb-3">
                     <label class="form-label" for="id_delivery_location">Delivery Location *</label>
                     <select name="delivery_location" class="form-select" id="id_delivery_location" required>
@@ -427,6 +521,47 @@
                     <label class="form-label">Delivery Notes (Optional)</label>
                     {{ form.delivery_notes }}
                     <small class="text-muted">Any special instructions for delivery?</small>
+                </div>
+                
+                <!-- ===== COUPON SECTION ===== -->
+                <div class="coupon-section">
+                    <h5 class="mb-3" style="color: #ffd700;">
+                        <i class="bi bi-ticket"></i> Have a Coupon Code?
+                    </h5>
+                    <div id="couponSection">
+                        {% if coupon_code %}
+                            <div class="coupon-applied">
+                                <div>
+                                    <span style="color: rgba(255,255,255,0.6);">✅ Coupon Applied:</span>
+                                    <span class="coupon-code">{{ coupon_code }}</span>
+                                    <span class="coupon-discount">(- KES {{ coupon_discount|floatformat:0 }})</span>
+                                </div>
+                                <button type="button" class="btn btn-remove" onclick="removeCoupon()">
+                                    <i class="bi bi-x-circle"></i> Remove
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="d-flex gap-2">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="couponCode" 
+                                       placeholder="Enter 9-digit coupon code"
+                                       maxlength="9"
+                                       style="text-transform: uppercase; letter-spacing: 2px;">
+                                <button type="button" 
+                                        class="btn btn-apply" 
+                                        id="applyCouponBtn"
+                                        onclick="applyCoupon()">
+                                    <i class="bi bi-check-circle"></i> Apply
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div id="couponMessage" class="mt-2"></div>
+                    <div class="mt-2 small text-muted">
+                        <i class="bi bi-info-circle"></i> 
+                        Coupons give you <strong style="color: #ffd700;">10% discount</strong> on orders over <strong style="color: #ffd700;">KES 1,000</strong>
+                    </div>
                 </div>
                 
                 <div class="mb-4">
@@ -509,6 +644,12 @@
                     </span>
                 </div>
                 
+                <!-- ===== COUPON DISCOUNT ===== -->
+                <div class="summary-item d-flex justify-content-between discount-item" id="couponDiscountRow" style="display: none;">
+                    <span class="label">Coupon Discount</span>
+                    <span class="value" id="coupon-discount-display">- KES 0</span>
+                </div>
+                
                 <hr style="border-color: rgba(255,255,255,0.05);">
                 
                 <div class="d-flex justify-content-between">
@@ -535,6 +676,102 @@
 </div>
 
 <script>
+    // ===== CSRF TOKEN =====
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // ===== COUPON FUNCTIONS =====
+    function applyCoupon() {
+        var code = document.getElementById('couponCode').value.trim().toUpperCase();
+        var messageDiv = document.getElementById('couponMessage');
+        var btn = document.getElementById('applyCouponBtn');
+        
+        if (!code) {
+            messageDiv.innerHTML = '<div class="alert alert-warning">Please enter a coupon code.</div>';
+            return;
+        }
+        
+        if (code.length !== 9) {
+            messageDiv.innerHTML = '<div class="alert alert-warning">Coupon code must be exactly 9 characters.</div>';
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-hourglass"></i> Applying...';
+        
+        fetch('/checkout/apply-coupon/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ code: code })
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                messageDiv.innerHTML = '<div class="alert alert-success">✅ ' + data.message + '</div>';
+                // Update totals
+                document.getElementById('total-display').innerHTML = 'KES ' + data.new_total.toLocaleString();
+                document.getElementById('coupon-discount-display').innerHTML = '- KES ' + data.discount.toLocaleString();
+                document.getElementById('couponDiscountRow').style.display = 'flex';
+                document.getElementById('couponCode').disabled = true;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Applied';
+                // Reload page to show coupon applied state
+                setTimeout(function() {
+                    location.reload();
+                }, 1500);
+            } else {
+                messageDiv.innerHTML = '<div class="alert alert-danger">❌ ' + data.message + '</div>';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Apply';
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+            messageDiv.innerHTML = '<div class="alert alert-danger">❌ Error applying coupon. Please try again.</div>';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-check-circle"></i> Apply';
+        });
+    }
+
+    function removeCoupon() {
+        fetch('/checkout/remove-coupon/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success) {
+                location.reload();
+            }
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    }
+
+    // ===== FORM VALIDATION =====
     document.addEventListener('DOMContentLoaded', function() {
         var form = document.getElementById('checkoutForm');
         if (form) {
@@ -612,7 +849,6 @@
     
     if (locationSelect) {
         locationSelect.addEventListener('change', updateTotals);
-        // Initial update
         updateTotals();
     }
 </script>

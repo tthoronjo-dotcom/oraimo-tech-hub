@@ -286,7 +286,7 @@
             }
         }
 
-        /* ===== DELIVERY BANNER ===== */
+        /* ===== DELIVERY BANNER SLIDER ===== */
         .delivery-banner {
             background: linear-gradient(135deg, #1a1a1a, #2d2d2d, #4a1d6d);
             color: white;
@@ -294,10 +294,74 @@
             font-size: 14px;
             text-align: center;
             border-bottom: 2px solid #2ecc71;
+            overflow: hidden;
+            position: relative;
+            min-height: 44px;
         }
-        
-        .delivery-banner .container .row div {
-            padding: 5px 0;
+
+        .banner-slider {
+            position: relative;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            padding: 0 15px;
+            white-space: nowrap;
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+        }
+
+        .banner-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            padding: 0;
+        }
+
+        .banner-dot.active {
+            background: #2ecc71;
+            transform: scale(1.2);
+        }
+
+        .banner-dot:hover {
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .delivery-banner {
+                font-size: 12px;
+                padding: 8px 0;
+                min-height: 38px;
+            }
+            .banner-slider {
+                height: 24px;
+            }
+            .banner-slide {
+                white-space: normal;
+            }
         }
         
         /* ===== MAIN CONTENT WRAPPER ===== */
@@ -757,7 +821,6 @@
             100% { transform: scale(1); }
         }
 
-        /* ===== FLOATING CART POP ANIMATION ===== */
         .floating-cart.pop {
             animation: cartPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -1104,10 +1167,6 @@
                 font-size: 1.8rem;
             }
             
-            .delivery-banner .row div {
-                font-size: 12px;
-            }
-            
             .main-wrapper {
                 padding: 10px;
                 margin: 10px 0;
@@ -1132,13 +1191,15 @@
     <!-- ===== SCROLL PROGRESS BAR ===== -->
     <div class="scroll-progress"></div>
 
-    <!-- ===== DELIVERY BANNER ===== -->
+    <!-- ===== DELIVERY BANNER SLIDER ===== -->
     <div class="delivery-banner">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4">🎉 FREE delivery on orders over KES 4,500</div>
-                <div class="col-md-4">📍 FREE delivery within Nairobi CBD</div>
-                <div class="col-md-4">⏱️ Delivered within 2 business days</div>
+            <div class="banner-slider" id="bannerSlider">
+                <div class="banner-slide active">🎉 FREE delivery on orders over KES 4,500</div>
+                <div class="banner-slide">📍 FREE delivery within Nairobi CBD</div>
+                <div class="banner-slide">⏱️ Delivered within 2 business days</div>
+                <div class="banner-slide">💳 Pay on Delivery - Cash or M-Pesa</div>
+                <div class="banner-slide">🛒 Shop Now! Premium Oraimo Products</div>
             </div>
         </div>
     </div>
@@ -1177,7 +1238,7 @@
                         </a>
                     </li>
                     
-                    <!-- ===== TRACK ORDER - FIXED: Added checkout: namespace ===== -->
+                    <!-- ===== TRACK ORDER ===== -->
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'checkout:track_order' %}"><i class="bi bi-truck"></i> Track</a>
                     </li>
@@ -1480,12 +1541,10 @@
             if (badge) {
                 badge.innerText = count || 0;
                 
-                // Bounce animation on badge
                 badge.classList.remove('bounce');
                 void badge.offsetWidth;
                 badge.classList.add('bounce');
                 
-                // Show/hide badge based on count
                 if (count > 0) {
                     badge.style.display = 'flex';
                 } else {
@@ -1493,7 +1552,6 @@
                 }
             }
             
-            // Pop animation on the floating cart
             if (floatingCart) {
                 floatingCart.classList.remove('pop');
                 void floatingCart.offsetWidth;
@@ -1548,7 +1606,6 @@
                         countSpan.classList.add('bounce');
                     }
                     
-                    // ===== UPDATE FLOATING CART BADGE WITH POP =====
                     updateFloatingCartBadge(data.total_items);
                     
                     var cartIcon = document.querySelector('.cart-icon');
@@ -1616,7 +1673,6 @@
                 });
             }
             
-            // ===== INITIALIZE FLOATING CART BADGE =====
             var initialCount = parseInt(document.getElementById('basket-count')?.innerText) || 0;
             var floatingBadge = document.getElementById('floatingCartBadge');
             if (floatingBadge) {
@@ -1887,6 +1943,66 @@
                     if (active) {
                         moveUnderline(active);
                     }
+                });
+            }
+
+            // ===== BANNER SLIDER =====
+            const slides = document.querySelectorAll('.banner-slide');
+            const totalSlides = slides.length;
+            let currentIndex = 0;
+            let slideInterval;
+
+            // Create dots
+            const dotsContainer = document.createElement('div');
+            dotsContainer.className = 'banner-dots';
+            slides.forEach((_, index) => {
+                const dot = document.createElement('button');
+                dot.className = 'banner-dot' + (index === 0 ? ' active' : '');
+                dot.setAttribute('data-index', index);
+                dot.addEventListener('click', function() {
+                    goToSlide(parseInt(this.getAttribute('data-index')));
+                    resetTimer();
+                });
+                dotsContainer.appendChild(dot);
+            });
+            
+            const bannerSlider = document.getElementById('bannerSlider');
+            bannerSlider.parentNode.insertBefore(dotsContainer, bannerSlider.nextSibling);
+
+            function goToSlide(index) {
+                slides.forEach((slide) => {
+                    slide.classList.remove('active');
+                });
+                slides[index].classList.add('active');
+                
+                const dots = document.querySelectorAll('.banner-dot');
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                currentIndex = index;
+            }
+
+            function nextSlide() {
+                const nextIndex = (currentIndex + 1) % totalSlides;
+                goToSlide(nextIndex);
+            }
+
+            function resetTimer() {
+                clearInterval(slideInterval);
+                slideInterval = setInterval(nextSlide, 4000);
+            }
+
+            if (totalSlides > 1) {
+                slideInterval = setInterval(nextSlide, 4000);
+            }
+
+            const banner = document.querySelector('.delivery-banner');
+            if (banner) {
+                banner.addEventListener('mouseenter', function() {
+                    clearInterval(slideInterval);
+                });
+                banner.addEventListener('mouseleave', function() {
+                    slideInterval = setInterval(nextSlide, 4000);
                 });
             }
         });
