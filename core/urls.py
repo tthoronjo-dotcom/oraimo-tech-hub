@@ -32,7 +32,7 @@ urlpatterns = [
     # ===== PAYMENT & OTHER =====
     path('api/pesapal/callback/', pesapal_callback, name='pesapal_callback'),
     path('api/pesapal/ipn/', pesapal_ipn, name='pesapal_ipn'),
-    path('captcha/', include('captcha.urls')),
+    
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
 ]
 
