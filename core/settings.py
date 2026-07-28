@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,8 +9,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-# ===== ALLOWED HOSTS - Vercel Compatible =====
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,.vercel.app,.ngrok-free.dev').split(',')
+# ===== ALLOWED HOSTS =====
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+
+# Render provides this automatically
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# CSRF Trusted Origins
+CSRF_TRUSTED_ORIGINS = [f'https://{RENDER_EXTERNAL_HOSTNAME}'] if RENDER_EXTERNAL_HOSTNAME else []
+CSRF_TRUSTED_ORIGINS += [
+    'https://oraimotechhub.co.ke',
+    'https://www.oraimotechhub.co.ke',
+    'https://oraimo-tech-hub.onrender.com',
+]
 
 # ===== APPLICATION =====
 INSTALLED_APPS = [
@@ -28,9 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'django_filters',
-    
     'ckeditor',
-    
     
     # Local apps
     'shop',
@@ -73,30 +85,13 @@ TEMPLATES = [
     },
 ]
 
-# ===== DATABASE - Flexible for Vercel =====
-# Use PostgreSQL if available, otherwise SQLite
-try:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': config('DB_NAME', default='oraimo_db'),
-            'USER': config('DB_USER', default='oraimo_user'),
-            'PASSWORD': config('DB_PASSWORD', default=''),
-            'HOST': config('DB_HOST', default='localhost'),
-            'PORT': config('DB_PORT', default='5432'),
-            'CONN_MAX_AGE': 60,
-            'OPTIONS': {
-                'connect_timeout': 10,
-            }
-        }
-    }
-except:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+# ===== DATABASE - Uses DATABASE_URL from Render =====
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', default=''),
+        conn_max_age=600,
+    )
+}
 
 # ===== AUTHENTICATION =====
 AUTH_PASSWORD_VALIDATORS = [
@@ -126,7 +121,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 CORS_ALLOWED_ORIGINS = [
     "https://oraimotechhub.co.ke",
     "https://www.oraimotechhub.co.ke",
-    "https://oraimo-tech-hub.vercel.app",
+    "https://oraimo-tech-hub.onrender.com",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
 ]
@@ -153,17 +148,17 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880
 
 # ===== SECURITY HEADERS =====
-SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SAMESITE = 'Strict'
-SECURE_HSTS_SECONDS = 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -178,8 +173,7 @@ CSP_FONT_SRC = ("'self'", "https://cdn.jsdelivr.net")
 CSP_CONNECT_SRC = ("'self'",)
 CSP_FRAME_SRC = ("'self'",)
 
-
-# ===== CACHE (File-based) =====
+# ===== CACHE =====
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
@@ -196,17 +190,6 @@ IMAGEKIT_CACHE_BACKEND = 'default'
 IMAGEKIT_USE_MEMCACHED_SAFE_CACHE_KEY = False
 IMAGEKIT_CACHE_TIMEOUT = 300
 IMAGEKIT_DEFAULT_CACHEFILE_BACKEND = 'imagekit.cachefiles.backends.Simple'
-
-# ===== CELERY (Disabled for Vercel) =====
-# Celery is disabled for Vercel deployment
-# CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-# CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-# CELERY_TIMEZONE = 'Africa/Nairobi'
-# CELERY_TASK_TRACK_STARTED = True
-# CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # ===== DELIVERY CONFIGURATION =====
 DELIVERY_FEES = {
@@ -230,17 +213,16 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='techbyoraimo@gmail.com')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='techbyoraimo@gmail.com')
-ADMIN_EMAIL = config('ADMIN_EMAIL', default='techbyoraimo@gmail.com')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='')
+ADMIN_EMAIL = config('ADMIN_EMAIL', default='')
 
-# Site URL for emails
-SITE_URL = config('SITE_URL', default='https://oraimo-tech-hub.vercel.app')
+SITE_URL = config('SITE_URL', default='https://oraimo-tech-hub.onrender.com')
 
-# ===== PESAPAL CONFIGURATION (DISABLED FOR COD) =====
+# ===== PESAPAL CONFIGURATION =====
 PESAPAL_TIMEOUT = 30
-PESAPAL_ENABLED = False
+PESAPAL_ENABLED = config('PESAPAL_ENABLED', default=False, cast=bool)
 
 # ===== REST FRAMEWORK =====
 REST_FRAMEWORK = {
@@ -254,7 +236,6 @@ REST_FRAMEWORK = {
     }
 }
 
-# ===== LOGGING =====
 # ===== LOGGING =====
 LOGGING = {
     'version': 1,
@@ -295,6 +276,7 @@ LOGGING = {
         },
     },
 }
+
 # ===== CUSTOM ERROR HANDLERS =====
 handler404 = 'core.views.custom_404'
 handler403 = 'core.views.custom_403'
@@ -302,13 +284,3 @@ handler500 = 'core.views.custom_500'
 
 # ===== SESSION =====
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-
-# ===== CSRF TRUSTED ORIGINS =====
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.ngrok-free.dev',
-    'https://*.vercel.app',
-]
-
-# ===== SECURE PROXY SETTINGS =====
-USE_X_FORWARDED_HOST = True
-USE_X_FORWARDED_PORT = True
