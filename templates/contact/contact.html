@@ -1,156 +1,383 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Contact Us - Oraimo Tech Hub{% endblock %}
 
 {% block extra_css %}
 <style>
     .contact-container {
-        max-width: 700px;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    .contact-card {
-        background: rgba(255,255,255,0.05);
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(10px);
         border-radius: 20px;
         padding: 30px;
-        border: 1px solid rgba(255,255,255,0.08);
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .contact-card label {
-        color: rgba(255,255,255,0.8);
+    
+    .contact-container h2 {
+        color: #ffffff;
+    }
+    
+    .contact-container .section-title::after {
+        background: linear-gradient(90deg, #54a0ff, #00d2d3);
+    }
+    
+    .contact-form .form-label {
+        color: #ffffff;
         font-weight: 500;
-        margin-bottom: 5px;
-    }
-    .contact-card .form-control {
-        background: rgba(255,255,255,0.05) !important;
-        border: 1px solid rgba(255,255,255,0.15) !important;
-        color: #fff !important;
-        border-radius: 10px !important;
-        padding: 10px 15px !important;
-        width: 100% !important;
-    }
-    .contact-card .form-control:focus {
-        border-color: #2ecc71 !important;
-        box-shadow: 0 0 20px rgba(46,204,113,0.1) !important;
-        outline: none !important;
-    }
-    .contact-card .form-control::placeholder {
-        color: rgba(255,255,255,0.3);
+        font-size: 14px;
     }
     
-    /* ===== CAPTCHA STYLING ===== */
-    .captcha-wrapper {
-        margin: 15px 0;
-        background: rgba(255,255,255,0.05);
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(255,255,255,0.08);
-    }
-    .captcha-wrapper .captcha {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        flex-wrap: wrap;
-    }
-    .captcha-wrapper .captcha img {
-        border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.1);
-        background: #fff;
-    }
-    .captcha-wrapper .captcha input {
-        flex: 1;
-        min-width: 150px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.15);
-        border-radius: 8px;
-        padding: 8px 12px;
-        color: #fff;
-    }
-    .captcha-wrapper .captcha input:focus {
-        border-color: #2ecc71;
-        outline: none;
+    .contact-form .form-control {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        padding: 12px 15px;
+        border-radius: 10px;
+        transition: all 0.3s ease;
     }
     
-    /* ===== SEND BUTTON — NAVY BLUE WITH GREEN BORDER (Matches Add to Cart) ===== */
+    .contact-form .form-control:focus {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: #54a0ff;
+        box-shadow: 0 0 20px rgba(84, 160, 255, 0.1);
+        color: #ffffff;
+    }
+    
+    .contact-form .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .contact-form .text-danger {
+        color: #ff6b6b !important;
+        font-size: 13px;
+    }
+    
+    .contact-form .text-muted {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    /* ===== RECAPTCHA ===== */
+    .contact-form .g-recaptcha {
+        margin: 10px 0;
+    }
+    
+    .contact-form .g-recaptcha > div {
+        margin: 0 auto;
+    }
+    
     .btn-send {
-        background: linear-gradient(135deg, #1a1a1a, #4a1d6d) !important;
-        border: 1px solid #2ecc71 !important;
-        color: #2ecc71 !important;
-        font-weight: bold !important;
-        padding: 12px 0 !important;
-        border-radius: 10px !important;
-        width: 100% !important;
-        transition: all 0.3s !important;
-        cursor: pointer !important;
-        font-size: 16px !important;
+        background: linear-gradient(135deg, #54a0ff, #00d2d3);
+        border: none;
+        color: #ffffff;
+        font-weight: bold;
+        padding: 12px 40px;
+        border-radius: 10px;
+        transition: all 0.3s;
+        width: 100%;
+        cursor: pointer;
     }
+    
     .btn-send:hover {
-        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-        color: #1a1a1a !important;
-        border: 1px solid #2ecc71 !important;
-        transform: scale(1.02) !important;
-        box-shadow: 0 5px 20px rgba(46,204,113,0.3) !important;
+        transform: scale(1.02);
+        box-shadow: 0 5px 20px rgba(84, 160, 255, 0.3);
+        color: #ffffff;
     }
-    .btn-send i {
-        margin-right: 8px;
+    
+    .btn-send:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
     }
-
-    .errorlist {
-        color: #ff6b6b;
-        list-style: none;
-        padding: 0;
-        font-size: 0.9rem;
-        margin-top: 5px;
+    
+    .info-card {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-bottom: 15px;
+        transition: all 0.3s;
     }
-    .errorlist li {
-        background: rgba(255,107,107,0.1);
-        padding: 5px 10px;
-        border-radius: 8px;
-        border-left: 3px solid #ff6b6b;
+    
+    .info-card:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(84, 160, 255, 0.2);
     }
-    .section-title {
-        color: white;
-        position: relative;
+    
+    .info-card i {
+        font-size: 24px;
+        color: #54a0ff;
+        margin-right: 15px;
+        flex-shrink: 0;
+    }
+    
+    .info-card .info-content {
+        color: rgba(255, 255, 255, 0.7);
+        word-break: break-word;
+    }
+    
+    .info-card .info-content strong {
+        color: #ffffff;
+        display: block;
+    }
+    
+    .info-card .info-content a {
+        color: #54a0ff;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .info-card .info-content a:hover {
+        color: #00d2d3;
+    }
+    
+    .info-card .info-content .whatsapp-link {
+        color: #25D366;
+    }
+    
+    .info-card .info-content .whatsapp-link:hover {
+        color: #1da851;
+    }
+    
+    /* ===== WORKING HOURS ===== */
+    .working-hours {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+    }
+    
+    .working-hours .day {
         display: inline-block;
-        padding-bottom: 10px;
+        min-width: 70px;
     }
-    .section-title::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 60px;
-        height: 3px;
-        background: linear-gradient(90deg, #2ecc71, #9b59b6);
-        border-radius: 2px;
+    
+    .working-hours .highlight {
+        color: #2ecc71;
+    }
+    
+    /* ===== ALERT MESSAGES ===== */
+    .alert {
+        border-radius: 10px;
+        padding: 12px 18px;
+    }
+    
+    .alert-success {
+        background: rgba(46, 204, 113, 0.15);
+        border: 1px solid rgba(46, 204, 113, 0.2);
+        color: #a8e6cf;
+    }
+    
+    .alert-danger {
+        background: rgba(255, 107, 107, 0.15);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        color: #ffa8a8;
+    }
+    
+    .alert-info {
+        background: rgba(84, 160, 255, 0.15);
+        border: 1px solid rgba(84, 160, 255, 0.2);
+        color: #a8d0ff;
+    }
+    
+    @media (max-width: 768px) {
+        .contact-container {
+            padding: 15px;
+        }
+        .btn-send {
+            width: 100%;
+        }
+        .info-card {
+            padding: 15px;
+        }
+        .info-card i {
+            font-size: 20px;
+            margin-right: 10px;
+        }
+        .info-card .info-content {
+            font-size: 14px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .contact-container {
+            padding: 10px;
+        }
+        .contact-form .form-control {
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+        .info-card {
+            padding: 12px;
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="contact-container">
-    <h1 class="text-center mb-4 section-title">📬 Contact Us</h1>
-    <p class="text-center text-white mb-4">Have questions about our products or orders? Reach out to us!</p>
+    <h2 class="mb-4 section-title">Contact Us</h2>
     
-    <div class="contact-card">
-        <form method="post">
-            {% csrf_token %}
-            
-            {% for field in form %}
-            <div class="mb-3">
-                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                <div class="errorlist">{{ field.errors }}</div>
-                {% endif %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
+                <div class="card-body">
+                    <form method="post" class="contact-form" id="contactForm">
+                        {% csrf_token %}
+                        
+                        <!-- ===== MESSAGES ===== -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% else %}info-circle{% endif %}"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        <!-- ===== NAME ===== -->
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ form.name.id_for_label }}">
+                                Full Name <span class="text-danger">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- ===== EMAIL ===== -->
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ form.email.id_for_label }}">
+                                Email Address <span class="text-danger">*</span>
+                            </label>
+                            {{ form.email }}
+                            <div class="text-muted small">We'll never share your email with anyone else.</div>
+                            {% if form.email.errors %}
+                                <div class="text-danger">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- ===== SUBJECT ===== -->
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ form.subject.id_for_label }}">
+                                Subject <span class="text-danger">*</span>
+                            </label>
+                            {{ form.subject }}
+                            {% if form.subject.errors %}
+                                <div class="text-danger">{{ form.subject.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- ===== MESSAGE ===== -->
+                        <div class="mb-3">
+                            <label class="form-label" for="{{ form.message.id_for_label }}">
+                                Message <span class="text-danger">*</span>
+                            </label>
+                            {{ form.message }}
+                            {% if form.message.errors %}
+                                <div class="text-danger">{{ form.message.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- ===== RECAPTCHA ===== -->
+                        <div class="mb-3 text-center">
+                            {{ form.captcha }}
+                            {% if form.captcha.errors %}
+                                <div class="text-danger">{{ form.captcha.errors }}</div>
+                            {% endif %}
+                            <div class="text-muted small mt-1">
+                                <i class="bi bi-shield-check"></i> Protected by reCAPTCHA
+                            </div>
+                        </div>
+                        
+                        <!-- ===== SUBMIT BUTTON ===== -->
+                        <button type="submit" class="btn-send" id="submitBtn">
+                            <i class="bi bi-send"></i> Send Message
+                        </button>
+                    </form>
+                </div>
             </div>
-            {% endfor %}
+        </div>
+        
+        <!-- ===== CONTACT INFO ===== -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="info-card">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-whatsapp text-success"></i>
+                    <div class="info-content">
+                        <strong>WhatsApp</strong>
+                        <a href="https://wa.me/254715804141" class="whatsapp-link" target="_blank">
+                            0715 804 141
+                        </a>
+                        <div class="text-muted small">Chat with us on WhatsApp</div>
+                    </div>
+                </div>
+            </div>
             
-            <button type="submit" class="btn-send">
-                <i class="bi bi-send"></i> Send Message
-            </button>
-        </form>
+            <div class="info-card">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-envelope"></i>
+                    <div class="info-content">
+                        <strong>Email</strong>
+                        <a href="mailto:info@oraimotechhub.co.ke">info@oraimotechhub.co.ke</a>
+                        <div class="text-muted small">We'll respond within 24 hours</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-clock"></i>
+                    <div class="info-content">
+                        <strong>Working Hours</strong>
+                        <div class="working-hours">
+                            <div><span class="day">Mon-Sat:</span> 9:00 AM - 5:00 PM</div>
+                            <div class="highlight small">✓ We also work on Saturdays!</div>
+                            <div class="text-muted small">Closed on Sundays</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-card">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-geo-alt"></i>
+                    <div class="info-content">
+                        <strong>Location</strong>
+                        Nairobi, Kenya
+                        <div class="text-muted small">We deliver across Kenya</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-card" style="border-color: rgba(46, 204, 113, 0.2);">
+                <div class="d-flex align-items-start">
+                    <i class="bi bi-shield-check text-success"></i>
+                    <div class="info-content">
+                        <strong>Secure</strong>
+                        Your message is encrypted and secure.
+                        <div class="text-muted small" style="font-size: 11px;">
+                            <i class="bi bi-lock"></i> Protected by reCAPTCHA
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.getElementById('contactForm');
+        var submitBtn = document.getElementById('submitBtn');
+        
+        if (form) {
+            form.addEventListener('submit', function() {
+                // Disable button to prevent double submission
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass"></i> Sending...';
+            });
+        }
+    });
+</script>
 {% endblock %}
