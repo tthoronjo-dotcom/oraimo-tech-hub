@@ -6,19 +6,15 @@
 {% block branding %}
 <h1 id="site-name">
     <a href="{% url 'admin:index' %}">
-        <img src="{% static 'img/logo.png' %}" alt="Oraimo Tech Hub" style="height: 40px; vertical-align: middle;">
-        Oraimo Tech Hub Admin
+        🛒 Oraimo Tech Hub Admin
     </a>
 </h1>
 {% endblock %}
 
-{% block nav-global %}{% endblock %}
-
 {% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{% static 'admin/css/custom_admin.css' %}">
 <style>
     #header {
-        background: linear-gradient(135deg, #1a1a2e, #2d2d2d, #4a1d6d) !important;
+        background: #1a1a2e !important;
         padding: 15px 40px !important;
     }
     #branding h1 {
@@ -27,16 +23,13 @@
     }
     #branding h1 a {
         color: #fff !important;
-        display: flex !important;
-        align-items: center !important;
-        gap: 10px !important;
         text-decoration: none !important;
     }
     #branding h1 a:hover {
         color: #2ecc71 !important;
     }
     .module h2, .module caption, .inline-group h2 {
-        background: linear-gradient(135deg, #1a1a2e, #4a1d6d) !important;
+        background: #1a1a2e !important;
     }
     a:link, a:visited {
         color: #54a0ff !important;
@@ -45,19 +38,12 @@
         color: #2ecc71 !important;
     }
     .button, input[type=submit], input[type=button], .submit-row input {
-        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
-        color: #fff !important;
+        background: #2ecc71 !important;
+        color: #1a1a2e !important;
         border: none !important;
     }
     .button:hover, input[type=submit]:hover, input[type=button]:hover {
-        background: linear-gradient(135deg, #27ae60, #219a52) !important;
-    }
-    .object-tools a:link, .object-tools a:visited {
-        background: linear-gradient(135deg, #54a0ff, #00d2d3) !important;
-        color: #fff !important;
-    }
-    .object-tools a:hover {
-        background: linear-gradient(135deg, #00d2d3, #54a0ff) !important;
+        background: #27ae60 !important;
     }
 </style>
 {% endblock %}
