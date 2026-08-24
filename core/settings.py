@@ -4,9 +4,7 @@ from decouple import config
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-# ===== WSGI / ASGI =====
-WSGI_APPLICATION = 'core.wsgi.application'
-ASGI_APPLICATION = 'core.asgi.application'  # If using ASGI
+
 # ===== SECURITY =====
 SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -291,6 +289,10 @@ LOGGING = {
         },
     },
 }
+
+# ===== WSGI / ASGI =====
+WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'  # If using ASGI
 
 # ===== RECAPTCHA =====
 RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY', default='')
