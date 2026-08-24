@@ -1,0 +1,77 @@
+﻿{% extends "admin/login.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    #login {
+        background: rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 20px !important;
+        padding: 40px !important;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+    }
+    #login .form-row {
+        padding: 10px 0 !important;
+    }
+    #login label {
+        color: #fff !important;
+        font-weight: 500 !important;
+    }
+    #login input[type="text"], #login input[type="password"] {
+        background: rgba(255,255,255,0.05) !important;
+        border: 1px solid rgba(255,255,255,0.1) !important;
+        color: #fff !important;
+        padding: 10px 15px !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+    }
+    #login input[type="text"]:focus, #login input[type="password"]:focus {
+        border-color: #54a0ff !important;
+        box-shadow: 0 0 20px rgba(84,160,255,0.1) !important;
+    }
+    #login .submit-row {
+        padding: 15px 0 0 !important;
+    }
+    #login .submit-row input {
+        background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+        border: none !important;
+        color: #fff !important;
+        font-weight: 700 !important;
+        padding: 12px 30px !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+    }
+    #login .submit-row input:hover {
+        background: linear-gradient(135deg, #27ae60, #219a52) !important;
+        transform: scale(1.02) !important;
+    }
+    #branding h1 {
+        color: #fff !important;
+        text-align: center !important;
+        font-size: 24px !important;
+        margin-bottom: 20px !important;
+    }
+    #branding h1 a {
+        color: #fff !important;
+        text-decoration: none !important;
+    }
+    .login .errors {
+        background: rgba(255,107,107,0.1) !important;
+        border: 1px solid rgba(255,107,107,0.2) !important;
+        border-radius: 10px !important;
+        color: #ffa8a8 !important;
+        padding: 10px !important;
+    }
+    .login .help {
+        color: rgba(255,255,255,0.4) !important;
+    }
+    .login .help a {
+        color: #54a0ff !important;
+    }
+    .login .help a:hover {
+        color: #2ecc71 !important;
+    }
+</style>
+{% endblock %}

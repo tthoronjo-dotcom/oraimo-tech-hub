@@ -1,0 +1,48 @@
+﻿{% extends "admin/index.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .dashboard #content {
+        width: 100% !important;
+    }
+    .module {
+        background: rgba(255,255,255,0.05) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+    }
+    .module h2 {
+        color: #fff !important;
+        padding: 10px 15px !important;
+        border-radius: 8px !important;
+        margin-bottom: 15px !important;
+    }
+    .module caption {
+        color: #fff !important;
+    }
+    .module th, .module td {
+        color: rgba(255,255,255,0.8) !important;
+    }
+    .dashboard .module table th a {
+        color: #54a0ff !important;
+    }
+    .dashboard .module table th a:hover {
+        color: #2ecc71 !important;
+    }
+    .dashboard .module table td a {
+        color: #2ecc71 !important;
+    }
+    .dashboard .module table td a:hover {
+        color: #54a0ff !important;
+    }
+    .dashboard .module table tr {
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+    }
+    .dashboard .module table tr:last-child {
+        border-bottom: none !important;
+    }
+</style>
+{% endblock %}

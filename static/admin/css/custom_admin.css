@@ -1,0 +1,228 @@
+﻿/* ===== CUSTOM ADMIN STYLES ===== */
+body {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e) !important;
+    color: #fff !important;
+}
+
+#header {
+    background: linear-gradient(135deg, #1a1a2e, #2d2d2d, #4a1d6d) !important;
+    padding: 15px 40px !important;
+}
+
+#branding h1 {
+    color: #fff !important;
+}
+
+#branding h1 a {
+    color: #fff !important;
+    text-decoration: none !important;
+}
+
+#branding h1 a:hover {
+    color: #2ecc71 !important;
+}
+
+.module {
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: linear-gradient(135deg, #1a1a2e, #4a1d6d) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+
+.module th, .module td {
+    color: rgba(255,255,255,0.8) !important;
+}
+
+.module th a, .module td a {
+    color: #54a0ff !important;
+}
+
+.module th a:hover, .module td a:hover {
+    color: #2ecc71 !important;
+}
+
+.module table tr {
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+.module table tr:last-child {
+    border-bottom: none !important;
+}
+
+a:link, a:visited {
+    color: #54a0ff !important;
+}
+
+a:hover {
+    color: #2ecc71 !important;
+}
+
+.button, input[type=submit], input[type=button], .submit-row input {
+    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 20px !important;
+}
+
+.button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: linear-gradient(135deg, #27ae60, #219a52) !important;
+    transform: scale(1.02) !important;
+}
+
+.object-tools a:link, .object-tools a:visited {
+    background: linear-gradient(135deg, #54a0ff, #00d2d3) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+
+.object-tools a:hover {
+    background: linear-gradient(135deg, #00d2d3, #54a0ff) !important;
+}
+
+#changelist-filter {
+    background: rgba(255,255,255,0.05) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+}
+
+#changelist-filter h2 {
+    background: linear-gradient(135deg, #1a1a2e, #4a1d6d) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+
+#changelist-filter a {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+#changelist-filter a:hover {
+    color: #2ecc71 !important;
+}
+
+#changelist-filter .selected {
+    color: #2ecc71 !important;
+}
+
+.paginator {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+.paginator a {
+    color: #54a0ff !important;
+}
+
+.paginator a:hover {
+    color: #2ecc71 !important;
+}
+
+.paginator .this-page {
+    background: linear-gradient(135deg, #2ecc71, #27ae60) !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+}
+
+fieldset {
+    background: rgba(255,255,255,0.03) !important;
+    border: 1px solid rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+}
+
+fieldset h2 {
+    background: linear-gradient(135deg, #1a1a2e, #4a1d6d) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+
+.form-row {
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+.form-row label {
+    color: #fff !important;
+}
+
+.help {
+    color: rgba(255,255,255,0.5) !important;
+}
+
+.datetime input, .vDateField, .vTimeField {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: 5px 10px !important;
+}
+
+.datetime input:focus, .vDateField:focus, .vTimeField:focus {
+    border-color: #54a0ff !important;
+    box-shadow: 0 0 20px rgba(84,160,255,0.1) !important;
+}
+
+#content {
+    color: #fff !important;
+}
+
+#content h1 {
+    color: #fff !important;
+}
+
+.breadcrumbs {
+    background: rgba(0,0,0,0.2) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+}
+
+.breadcrumbs a {
+    color: #54a0ff !important;
+}
+
+.breadcrumbs a:hover {
+    color: #2ecc71 !important;
+}
+
+.messagelist li {
+    border-radius: 8px !important;
+}
+
+.success {
+    background: rgba(46,204,113,0.1) !important;
+    border: 1px solid rgba(46,204,113,0.2) !important;
+    color: #a8e6cf !important;
+}
+
+.error, .errornote {
+    background: rgba(255,107,107,0.1) !important;
+    border: 1px solid rgba(255,107,107,0.2) !important;
+    color: #ffa8a8 !important;
+}
+
+.warning {
+    background: rgba(241,196,15,0.1) !important;
+    border: 1px solid rgba(241,196,15,0.2) !important;
+    color: #f1c40f !important;
+}
+
+/* ===== DARK SCROLLBARS ===== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2ecc71;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #27ae60;
+}
