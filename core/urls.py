@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
@@ -8,7 +9,17 @@ from payment.views import pesapal_callback, pesapal_ipn
 from shop.views import dashboard_view
 from shop.views import privacy_policy, terms_of_service, returns_policy, faq_page
 
+def test_view(request):
+    return HttpResponse("Django is working! 🚀")
+
+def admin_check(request):
+    return HttpResponse("Admin path is correct!")
+
 urlpatterns = [
+    # ===== TEST VIEWS =====
+    path('test/', test_view, name='test'),
+    path('admin-check/', admin_check, name='admin_check'),
+    
     # ===== DASHBOARD — MUST COME BEFORE ADMIN =====
     path('adteddymin/reports/', dashboard_view, name='reports_dashboard'),
     
