@@ -143,6 +143,10 @@ AWS_STORAGE_BUCKET_NAME = config('R2_BUCKET_NAME')
 AWS_S3_ENDPOINT_URL = config('R2_ENDPOINT_URL')
 AWS_S3_CUSTOM_DOMAIN = config('R2_PUBLIC_URL').replace('https://', '')
 
+# ===== CRITICAL R2 SETTINGS =====
+AWS_S3_REGION_NAME = 'auto'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 AWS_DEFAULT_ACL = 'public-read'
@@ -292,7 +296,7 @@ LOGGING = {
 
 # ===== WSGI / ASGI =====
 WSGI_APPLICATION = 'core.wsgi.application'
-ASGI_APPLICATION = 'core.asgi.application'  # If using ASGI
+ASGI_APPLICATION = 'core.asgi.application'
 
 # ===== RECAPTCHA =====
 RECAPTCHA_PUBLIC_KEY = config('RECAPTCHA_PUBLIC_KEY', default='')
